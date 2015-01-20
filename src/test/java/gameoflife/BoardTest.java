@@ -38,4 +38,23 @@ public class BoardTest {
         }).asString())));
     }
 
+    @Test
+    public void liveCellWithMoreThanThreeLiveNeighboursDies() {
+        Board board = new Board(new int[][] {
+                {0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 0},
+                {0, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0},
+        });
+
+        board.nextGeneration();
+
+        assertThat(board.asString(), is(sameBeanAs(new Board(new int[][]{
+                {0, 0, 0, 0, 0},
+                {0, 1, 0, 1, 0},
+                {0, 1, 0, 1, 0},
+                {0, 0, 0, 0, 0},
+        }).asString())));
+    }
+
 }
