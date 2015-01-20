@@ -8,27 +8,16 @@ public class Board {
 
     private final int[][] board;
 
-    @SuppressWarnings("ManualArrayCopy")
     public Board(int[][] board) {
-        this.board = new int[board.length + 2][board[0].length + 2];
-
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                this.board[i + 1][j + 1] = board[i][j];
-            }
-        }
+        this.board = boardWithMargin(board);
     }
-
+    
     public void nextGeneration() {
         Set<Point> newDead = new HashSet<>();
         Set<Point> newLive = new HashSet<>();
 
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (coordinatesAreOnMargin(i, j)) {
-                    continue;
-                }
-
+        for (int i = 1; i < board.length - 1; i++) {
+            for (int j = 1; j < board[i].length - 1; j++) {
                 if (cellIsLive(i, j)) {
                     if (liveNeighboursOf(i, j) < 2) {
                         newDead.add(new Point(i, j));
@@ -51,8 +40,15 @@ public class Board {
         }
     }
 
-    private boolean coordinatesAreOnMargin(int i, int j) {
-        return i == 0 || j == 0 || i == board.length - 1 || j == board[i].length - 1;
+    public String asString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < board.length - 1; i++) {
+            for (int j = 1; j < board[i].length - 1; j++) {
+                sb.append(board[i][j]);
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
     private int liveNeighboursOf(int i, int j) {
@@ -73,15 +69,17 @@ public class Board {
         return board[i][j] == 1;
     }
 
-    public String asString() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 1; i < board.length - 1; i++) {
-            for (int j = 1; j < board[i].length - 1; j++) {
-                sb.append(board[i][j]);
+    @SuppressWarnings("ManualArrayCopy")
+    private static int[][] boardWithMargin(int[][] board) {
+        int[][] newBoard = new int[board.length + 2][board[0].length + 2];
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                newBoard[i + 1][j + 1] = board[i][j];
             }
-            sb.append("\n");
         }
-        return sb.toString();
+
+        return newBoard;
     }
 
 }
