@@ -1,7 +1,8 @@
 package gameoflife;
 
-import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Board {
@@ -11,33 +12,26 @@ public class Board {
     public Board(int[][] board) {
         this.board = boardWithMargin(board);
     }
-    
-    public void nextGeneration() {
-        Set<Point> newDead = new HashSet<>();
-        Set<Point> newLive = new HashSet<>();
 
-        for (int i = 1; i < board.length - 1; i++) {
-            for (int j = 1; j < board[i].length - 1; j++) {
-                if (cellIsLive(i, j)) {
-                    if (liveNeighboursOf(i, j) < 2) {
-                        newDead.add(new Point(i, j));
-                    } else if (liveNeighboursOf(i, j) > 3) {
-                        newDead.add(new Point(i, j));
-                    }
-                } else {
-                    if (liveNeighboursOf(i, j) == 3) {
-                        newLive.add(new Point(i, j));
-                    }
+    public void nextGeneration() {
+        Set<Cell> deadCells = new HashSet<>();
+        Set<Cell> liveCells = new HashSet<>();
+
+        for (Cell cell : allCells()) {
+            if (isLive(cell)) {
+                if (liveNeighboursOf(cell) < 2) {
+                    deadCells.add(cell);
+                } else if (liveNeighboursOf(cell) > 3) {
+                    deadCells.add(cell);
+                }
+            } else {
+                if (liveNeighboursOf(cell) == 3) {
+                    liveCells.add(cell);
                 }
             }
         }
 
-        for (Point point : newDead) {
-            board[point.x][point.y] = 0;
-        }
-        for (Point point : newLive) {
-            board[point.x][point.y] = 1;
-        }
+        updateBoard(deadCells, liveCells);
     }
 
     public String asString() {
@@ -51,12 +45,23 @@ public class Board {
         return sb.toString();
     }
 
-    private int liveNeighboursOf(int i, int j) {
+
+
+    private void updateBoard(Set<Cell> deadCells, Set<Cell> liveCells) {
+        for (Cell cell : deadCells) {
+            board[cell.i][cell.j] = 0;
+        }
+        for (Cell cell : liveCells) {
+            board[cell.i][cell.j] = 1;
+        }
+    }
+
+    private int liveNeighboursOf(Cell cell) {
         int count = 0;
         for (int di = -1; di <= 1; di++) {
             for (int dj = -1; dj <= 1; dj++) {
                 if (di != 0 || dj != 0) {
-                    if (cellIsLive(i + di, j + dj)) {
+                    if (cellIsLive(cell.i + di, cell.j + dj)) {
                         count++;
                     }
                 }
@@ -65,8 +70,22 @@ public class Board {
         return count;
     }
 
+    private boolean isLive(Cell cell) {
+        return cellIsLive(cell.i, cell.j);
+    }
+
     private boolean cellIsLive(int i, int j) {
         return board[i][j] == 1;
+    }
+
+    private Iterable<Cell> allCells() {
+        List<Cell> allCells = new ArrayList<>();
+        for (int i = 1; i < board.length - 1; i++) {
+            for (int j = 1; j < board[i].length - 1; j++) {
+                allCells.add(new Cell(i, j));
+            }
+        }
+        return allCells;
     }
 
     @SuppressWarnings("ManualArrayCopy")
@@ -80,6 +99,18 @@ public class Board {
         }
 
         return newBoard;
+    }
+
+    private static class Cell {
+
+        private final int i;
+        private final int j;
+
+        public Cell(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+
     }
 
 }
