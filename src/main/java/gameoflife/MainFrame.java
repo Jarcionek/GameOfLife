@@ -2,17 +2,25 @@ package gameoflife;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Random;
+
+import static java.lang.Integer.parseInt;
 
 public class MainFrame extends JFrame {
 
@@ -25,6 +33,10 @@ public class MainFrame extends JFrame {
     private final JComponent[][] cells;
     private final JLabel generationCountLabel = new JLabel("0");
     private int generationCount = 0;
+
+    private final JCheckBox autoPlayCheckBox = new JCheckBox("autoplay (delays in ms):");
+    private final JTextField autoPlayDelayField = new JTextField("100", 10);
+    private final JButton nextButton = new JButton("next");
 
     public MainFrame() {
         super("Conway's Game of Life");
@@ -43,14 +55,58 @@ public class MainFrame extends JFrame {
     }
 
     private void createComponents() {
+        autoPlayCheckBox.setFont(new Font("Arial", Font.PLAIN, autoPlayCheckBox.getFont().getSize()));
         generationCountLabel.setFont(new Font("Arial", Font.PLAIN, generationCountLabel.getFont().getSize()));
 
-        JButton nextButton = new JButton("next");
-        nextButton.addActionListener(click -> nextGeneration());
+        autoPlayCheckBox.addActionListener(new ActionListener() {
+
+            private SwingWorker<Object, Object> swingWorker;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (autoPlayCheckBox.isSelected()) {
+                    nextButton.setEnabled(false);
+                    swingWorker = new SwingWorker<Object, Object>() {
+                        @Override
+                        protected Object doInBackground() throws Exception {
+                            while (!isCancelled()) {
+                                nextGeneration();
+                                publish(new Object());
+                                Thread.sleep(parseInt(autoPlayDelayField.getText()));
+                            }
+                            return null;
+                        }
+                        @Override
+                        protected void process(List<Object> chunks) {
+                            refreshCells();
+                        }
+                        @Override
+                        protected void done() {
+                            try {
+                                get();
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    };
+                    swingWorker.execute();
+                } else {
+                    swingWorker.cancel(false);
+                    nextButton.setEnabled(true);
+                }
+            }
+        });
+
+        nextButton.addActionListener(click -> {
+            nextGeneration();
+            refreshCells();
+        });
 
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.add(generationCountLabel);
         buttonsPanel.add(nextButton);
+        buttonsPanel.add(autoPlayCheckBox);
+        buttonsPanel.add(autoPlayDelayField);
 
         JPanel boardPanel = new JPanel(new GridLayout(BOARD_HEIGHT, BOARD_WIDTH));
         for (int y = 0; y < BOARD_HEIGHT; y++) {
@@ -84,7 +140,6 @@ public class MainFrame extends JFrame {
     private void nextGeneration() {
         board.nextGeneration();
         generationCount++;
-        refreshCells();
     }
 
     private void refreshCells() {
