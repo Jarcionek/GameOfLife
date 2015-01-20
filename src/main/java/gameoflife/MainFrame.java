@@ -17,8 +17,11 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CancellationException;
 
 import static java.lang.Integer.parseInt;
 
@@ -84,6 +87,8 @@ public class MainFrame extends JFrame {
                         protected void done() {
                             try {
                                 get();
+                            } catch (CancellationException e) {
+                                // cancelled by unchecking the box
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
@@ -115,6 +120,24 @@ public class MainFrame extends JFrame {
                 cells[y][x].setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
                 cells[y][x].setOpaque(true);
                 setBorder(y, x);
+                final int fy = y;
+                final int fx = x;
+                cells[y][x].addMouseMotionListener(new MouseAdapter() {
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        if (!nextButton.isEnabled()) { // i.e. if swing worker is running
+                            return;
+                        }
+
+                        if (e.getModifiers() == 1) { // shift
+                            board.setDead(fy, fx);
+                        } else if (e.getModifiers() == 2) { // ctrl
+                            board.setLive(fy, fx);
+                        }
+                        setColorOfCell(fy, fx);
+                        cells[fy][fx].repaint();
+                    }
+                });
             }
         }
 
@@ -147,14 +170,18 @@ public class MainFrame extends JFrame {
 
         for (int y = 0; y < BOARD_HEIGHT; y++) {
             for (int x = 0; x < BOARD_WIDTH; x++) {
-                if (board.isCellLive(y, x)) {
-                    cells[y][x].setBackground(Color.black);
-                } else {
-                    cells[y][x].setBackground(Color.white);
-                }
+                setColorOfCell(y, x);
             }
         }
         this.repaint();
+    }
+
+    private void setColorOfCell(int y, int x) {
+        if (board.isCellLive(y, x)) {
+            cells[y][x].setBackground(Color.black);
+        } else {
+            cells[y][x].setBackground(Color.white);
+        }
     }
 
     private Board initBoard() {

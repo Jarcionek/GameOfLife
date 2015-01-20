@@ -48,6 +48,14 @@ public class Board {
         return board[y + 1][x + 1] == 1;
     }
 
+    public void setDead(int y, int x) {
+        board[y + 1][x + 1] = 0;
+    }
+
+    public void setLive(int y, int x) {
+        board[y + 1][x + 1] = 1;
+    }
+
 
 
     private void updateBoard(Set<Cell> deadCells, Set<Cell> liveCells) {
