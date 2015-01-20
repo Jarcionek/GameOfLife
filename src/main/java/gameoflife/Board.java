@@ -18,14 +18,13 @@ public class Board {
         Set<Cell> liveCells = new HashSet<>();
 
         for (Cell cell : allCells()) {
+            int liveNeighbours = liveNeighboursOf(cell);
             if (isLive(cell)) {
-                if (liveNeighboursOf(cell) < 2) {
-                    deadCells.add(cell);
-                } else if (liveNeighboursOf(cell) > 3) {
+                if (liveNeighbours < 2 || 3 < liveNeighbours) {
                     deadCells.add(cell);
                 }
             } else {
-                if (liveNeighboursOf(cell) == 3) {
+                if (liveNeighbours == 3) {
                     liveCells.add(cell);
                 }
             }
