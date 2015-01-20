@@ -21,57 +21,45 @@ public class BoardTest {
     @Test
     public void liveCellWithFewerThanTwoLiveNeighboursDies() {
         Board board = new Board(new int[][] {
-                {0, 0, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0, 0},
-                {0, 1, 0, 0, 1, 0},
-                {0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0},
+                {1, 0, 0, 1},
         });
 
         board.nextGeneration();
 
         assertThat(board.asString(), is(sameBeanAs(new Board(new int[][]{
-                {0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0},
         }).asString())));
     }
 
     @Test
     public void liveCellWithMoreThanThreeLiveNeighboursDies() {
         Board board = new Board(new int[][] {
-                {0, 0, 0, 0, 0},
-                {0, 1, 1, 1, 0},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
+                {1, 1, 1},
+                {1, 1, 1},
         });
 
         board.nextGeneration();
 
         assertThat(board.asString(), is(sameBeanAs(new Board(new int[][]{
-                {0, 0, 0, 0, 0},
-                {0, 1, 0, 1, 0},
-                {0, 1, 0, 1, 0},
-                {0, 0, 0, 0, 0},
+                {1, 0, 1},
+                {1, 0, 1},
         }).asString())));
     }
 
     @Test
     public void deadCellWithThreeLiveNeighboursBecomesLive() {
         Board board = new Board(new int[][] {
-                {0, 0, 0, 0},
-                {0, 1, 1, 0},
-                {0, 1, 0, 0},
-                {0, 0, 0, 0},
+                {1, 1},
+                {1, 0},
         });
 
         board.nextGeneration();
 
         assertThat(board.asString(), is(sameBeanAs(new Board(new int[][]{
-                {0, 0, 0, 0},
-                {0, 1, 1, 0},
-                {0, 1, 1, 0},
-                {0, 0, 0, 0},
+                {1, 1},
+                {1, 1},
         }).asString())));
     }
 

@@ -8,8 +8,15 @@ public class Board {
 
     private final int[][] board;
 
+    @SuppressWarnings("ManualArrayCopy")
     public Board(int[][] board) {
-        this.board = board;
+        this.board = new int[board.length + 2][board[0].length + 2];
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                this.board[i + 1][j + 1] = board[i][j];
+            }
+        }
     }
 
     public void nextGeneration() {
@@ -68,9 +75,9 @@ public class Board {
 
     public String asString() {
         StringBuilder sb = new StringBuilder();
-        for (int[] row : board) {
-            for (int value : row) {
-                sb.append(value);
+        for (int i = 1; i < board.length - 1; i++) {
+            for (int j = 1; j < board[i].length - 1; j++) {
+                sb.append(board[i][j]);
             }
             sb.append("\n");
         }
