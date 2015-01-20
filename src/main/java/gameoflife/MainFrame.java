@@ -10,6 +10,7 @@ import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.Random;
 
@@ -22,6 +23,8 @@ public class MainFrame extends JFrame {
     private final Board board;
 
     private final JComponent[][] cells;
+    private final JLabel generationCountLabel = new JLabel("0");
+    private int generationCount = 0;
 
     public MainFrame() {
         super("Conway's Game of Life");
@@ -40,10 +43,13 @@ public class MainFrame extends JFrame {
     }
 
     private void createComponents() {
+        generationCountLabel.setFont(new Font("Arial", Font.PLAIN, generationCountLabel.getFont().getSize()));
+
         JButton nextButton = new JButton("next");
         nextButton.addActionListener(click -> nextGeneration());
 
         JPanel buttonsPanel = new JPanel();
+        buttonsPanel.add(generationCountLabel);
         buttonsPanel.add(nextButton);
 
         JPanel boardPanel = new JPanel(new GridLayout(BOARD_HEIGHT, BOARD_WIDTH));
@@ -77,10 +83,13 @@ public class MainFrame extends JFrame {
 
     private void nextGeneration() {
         board.nextGeneration();
+        generationCount++;
         refreshCells();
     }
 
     private void refreshCells() {
+        generationCountLabel.setText("generation " + generationCount);
+
         for (int y = 0; y < BOARD_HEIGHT; y++) {
             for (int x = 0; x < BOARD_WIDTH; x++) {
                 if (board.isCellLive(y, x)) {
