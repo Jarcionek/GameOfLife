@@ -14,14 +14,23 @@ public class Board {
 
     public void nextGeneration() {
         Set<Point> newDead = new HashSet<>();
+        Set<Point> newLive = new HashSet<>();
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
+                if (coordinatesAreOnMargin(i, j)) {
+                    continue;
+                }
+
                 if (cellIsLive(i, j)) {
                     if (liveNeighboursOf(i, j) < 2) {
                         newDead.add(new Point(i, j));
                     } else if (liveNeighboursOf(i, j) > 3) {
                         newDead.add(new Point(i, j));
+                    }
+                } else {
+                    if (liveNeighboursOf(i, j) == 3) {
+                        newLive.add(new Point(i, j));
                     }
                 }
             }
@@ -30,6 +39,13 @@ public class Board {
         for (Point point : newDead) {
             board[point.x][point.y] = 0;
         }
+        for (Point point : newLive) {
+            board[point.x][point.y] = 1;
+        }
+    }
+
+    private boolean coordinatesAreOnMargin(int i, int j) {
+        return i == 0 || j == 0 || i == board.length - 1 || j == board[i].length - 1;
     }
 
     private int liveNeighboursOf(int i, int j) {
