@@ -35,32 +35,36 @@ public class Board {
 
     public String asString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 1; i < board.length - 1; i++) {
-            for (int j = 1; j < board[i].length - 1; j++) {
-                sb.append(board[i][j]);
+        for (int y = 1; y < board.length - 1; y++) {
+            for (int x = 1; x < board[y].length - 1; x++) {
+                sb.append(board[y][x]);
             }
             sb.append("\n");
         }
         return sb.toString();
     }
 
+    public boolean isCellLive(int y, int x) {
+        return board[y + 1][x + 1] == 1;
+    }
+
 
 
     private void updateBoard(Set<Cell> deadCells, Set<Cell> liveCells) {
         for (Cell cell : deadCells) {
-            board[cell.i][cell.j] = 0;
+            board[cell.y][cell.x] = 0;
         }
         for (Cell cell : liveCells) {
-            board[cell.i][cell.j] = 1;
+            board[cell.y][cell.x] = 1;
         }
     }
 
     private int liveNeighboursOf(Cell cell) {
         int count = 0;
-        for (int di = -1; di <= 1; di++) {
-            for (int dj = -1; dj <= 1; dj++) {
-                if (di != 0 || dj != 0) {
-                    if (cellIsLive(cell.i + di, cell.j + dj)) {
+        for (int dy = -1; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                if (dy != 0 || dx != 0) {
+                    if (cellIsLive(cell.y + dy, cell.x + dx)) {
                         count++;
                     }
                 }
@@ -70,18 +74,18 @@ public class Board {
     }
 
     private boolean isLive(Cell cell) {
-        return cellIsLive(cell.i, cell.j);
+        return cellIsLive(cell.y, cell.x);
     }
 
-    private boolean cellIsLive(int i, int j) {
-        return board[i][j] == 1;
+    private boolean cellIsLive(int y, int x) {
+        return board[y][x] == 1;
     }
 
     private Iterable<Cell> allCells() {
         List<Cell> allCells = new ArrayList<>();
-        for (int i = 1; i < board.length - 1; i++) {
-            for (int j = 1; j < board[i].length - 1; j++) {
-                allCells.add(new Cell(i, j));
+        for (int y = 1; y < board.length - 1; y++) {
+            for (int x = 1; x < board[y].length - 1; x++) {
+                allCells.add(new Cell(y, x));
             }
         }
         return allCells;
@@ -91,9 +95,9 @@ public class Board {
     private static int[][] boardWithMargin(int[][] board) {
         int[][] newBoard = new int[board.length + 2][board[0].length + 2];
 
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                newBoard[i + 1][j + 1] = board[i][j];
+        for (int y = 0; y < board.length; y++) {
+            for (int x = 0; x < board[y].length; x++) {
+                newBoard[y + 1][x + 1] = board[y][x];
             }
         }
 
@@ -102,12 +106,12 @@ public class Board {
 
     private static class Cell {
 
-        private final int i;
-        private final int j;
+        private final int y;
+        private final int x;
 
-        public Cell(int i, int j) {
-            this.i = i;
-            this.j = j;
+        public Cell(int y, int x) {
+            this.y = y;
+            this.x = x;
         }
 
     }
