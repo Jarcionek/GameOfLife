@@ -17,6 +17,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -129,10 +130,12 @@ public class MainFrame extends JFrame {
                             return;
                         }
 
-                        if (e.getModifiers() == 1) { // shift
+                        if (e.getModifiers() == InputEvent.SHIFT_MASK) {
                             board.setDead(fy, fx);
-                        } else if (e.getModifiers() == 2) { // ctrl
-                            board.setLive(fy, fx);
+                        } else if (e.getModifiers() == InputEvent.CTRL_MASK) {
+                            board.setLive(fy, fx, 1);
+                        } else if (e.getModifiers() == InputEvent.ALT_MASK) {
+                            board.setLive(fy, fx, 2);
                         }
                         setColorOfCell(fy, fx);
                         cells[fy][fx].repaint();
@@ -177,10 +180,11 @@ public class MainFrame extends JFrame {
     }
 
     private void setColorOfCell(int y, int x) {
-        if (board.isCellLive(y, x)) {
-            cells[y][x].setBackground(Color.black);
-        } else {
-            cells[y][x].setBackground(Color.white);
+        switch (board.getCellColor(y, x)) {
+            case 2: cells[y][x].setBackground(Color.red); break;
+            case 1: cells[y][x].setBackground(Color.blue); break;
+            case 0: cells[y][x].setBackground(Color.white); break;
+            default: throw new IllegalArgumentException();
         }
     }
 
@@ -190,7 +194,11 @@ public class MainFrame extends JFrame {
         Random random = new Random();
         for (int y = 0; y < BOARD_HEIGHT; y++) {
             for (int x = 0; x < BOARD_WIDTH; x++) {
-                initBoard[y][x] = random.nextInt(2);
+                if (random.nextInt(3) > 1) {
+                    initBoard[y][x] = 1 + random.nextInt(2);
+                } else {
+                    initBoard[y][x] = 0;
+                }
             }
         }
 

@@ -15,17 +15,20 @@ public class Board {
 
     public void nextGeneration() {
         Set<Cell> deadCells = new HashSet<>();
-        Set<Cell> liveCells = new HashSet<>();
+        Set<ColorCell> liveCells = new HashSet<>();
 
         for (Cell cell : allCells()) {
             int liveNeighbours = liveNeighboursOf(cell);
             if (isLive(cell)) {
                 if (liveNeighbours < 2 || 3 < liveNeighbours) {
                     deadCells.add(cell);
+                } else {
+                    //TODO Jarek: change color?
                 }
             } else {
                 if (liveNeighbours == 3) {
-                    liveCells.add(cell);
+                    int dominantColorOfNeighbours = dominantColorOfNeighbours(cell);
+                    liveCells.add(new ColorCell(cell.y, cell.x, dominantColorOfNeighbours));
                 }
             }
         }
@@ -44,8 +47,12 @@ public class Board {
         return sb.toString();
     }
 
+    public int getCellColor(int y, int x) {
+        return board[y + 1][x + 1];
+    }
+
     public boolean isCellLive(int y, int x) {
-        return board[y + 1][x + 1] == 1;
+        return board[y + 1][x + 1] != 0;
     }
 
     public void setDead(int y, int x) {
@@ -56,14 +63,17 @@ public class Board {
         board[y + 1][x + 1] = 1;
     }
 
+    public void setLive(int y, int x, int color) {
+        board[y + 1][x + 1] = color;
+    }
 
 
-    private void updateBoard(Set<Cell> deadCells, Set<Cell> liveCells) {
+    private void updateBoard(Set<Cell> deadCells, Set<ColorCell> liveCells) {
         for (Cell cell : deadCells) {
             board[cell.y][cell.x] = 0;
         }
-        for (Cell cell : liveCells) {
-            board[cell.y][cell.x] = 1;
+        for (ColorCell cell : liveCells) {
+            board[cell.y][cell.x] = cell.color;
         }
     }
 
@@ -81,12 +91,35 @@ public class Board {
         return count;
     }
 
+    private int dominantColorOfNeighbours(Cell cell) {
+        int color_1 = 0;
+        int color_2 = 0;
+        //TODO Jarek: support for more colors
+        for (int dy = -1; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                if (dy == 0 && dx == 0) {
+                    continue;
+                }
+                int x = cell.x + dx;
+                int y = cell.y + dy;
+                if (cellIsLive(y, x)) {
+                    if (board[y][x] == 1) {
+                        color_1++;
+                    } else if (board[y][x] == 2) {
+                        color_2++;
+                    }
+                }
+            }
+        }
+        return color_1 > color_2 ? 1 : 2;
+    }
+
     private boolean isLive(Cell cell) {
         return cellIsLive(cell.y, cell.x);
     }
 
     private boolean cellIsLive(int y, int x) {
-        return board[y][x] == 1;
+        return board[y][x] != 0;
     }
 
     private Iterable<Cell> allCells() {
@@ -120,6 +153,20 @@ public class Board {
         public Cell(int y, int x) {
             this.y = y;
             this.x = x;
+        }
+
+    }
+
+    private static class ColorCell {
+
+        private final int y;
+        private final int x;
+        private final int color;
+
+        public ColorCell(int y, int x, int color) {
+            this.y = y;
+            this.x = x;
+            this.color = color;
         }
 
     }

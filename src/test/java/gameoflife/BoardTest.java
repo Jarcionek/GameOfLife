@@ -63,4 +63,50 @@ public class BoardTest {
         }).asString())));
     }
 
+    @Test
+    public void worksWithDifferentNumbersThanOneSoThatMultiplePopulationsArePossible() {
+        Board board = new Board(new int[][] {
+                {2, 2, 0, 0},
+                {2, 0, 0, 0},
+        });
+
+        board.nextGeneration();
+
+        assertThat(board.asString(), is(sameBeanAs(new Board(new int[][]{
+                {2, 2, 0, 0},
+                {2, 2, 0, 0},
+        }).asString())));
+    }
+    
+    @Test
+    public void deadCellWithThreeLiveNeighboursComesToLiveWithTheColorOfDominatingColorAmongNeighbours() {
+        Board board = new Board(new int[][] {
+                {0, 0, 1},
+                {1, 0, 0},
+                {0, 0, 2},
+        });
+
+        board.nextGeneration();
+
+        assertThat(board.asString(), is(sameBeanAs(new Board(new int[][]{
+                {0, 0, 0},
+                {0, 1, 0},
+                {0, 0, 0},
+        }).asString())));
+
+        board = new Board(new int[][] {
+                {0, 0, 1},
+                {2, 0, 0},
+                {0, 0, 2},
+        });
+
+        board.nextGeneration();
+
+        assertThat(board.asString(), is(sameBeanAs(new Board(new int[][]{
+                {0, 0, 0},
+                {0, 2, 0},
+                {0, 0, 0},
+        }).asString())));
+    }
+
 }
