@@ -1,26 +1,33 @@
 package gameoflife;
 
-public enum Cell {
+public class Cell {
 
-    DEAD(0),
-    BLUE(1),
-    RED(2),
-    BLUE_TRAIL(3),
-    RED_TRAIL(4);
+    private final int y;
+    private final int x;
+    private final int color;
 
-    public final int value;
-
-    private Cell(int value) {
-        this.value = value;
+    public Cell(int y, int x, int color) {
+        this.y = y;
+        this.x = x;
+        this.color = color;
     }
 
-    public static Cell withValue(int value) {
-        for (Cell cell : Cell.values()) {
-            if (cell.value == value) {
-                return cell;
-            }
-        }
-        throw new IllegalArgumentException("No cell for value " + value);
+    public Cell(Cell cell, int color) {
+        this.y = cell.y();
+        this.x = cell.x();
+        this.color = color;
+    }
+
+    public int y() {
+        return y;
+    }
+
+    public int x() {
+        return x;
+    }
+
+    public int type() {
+        return color;
     }
 
 }

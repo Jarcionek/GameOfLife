@@ -131,11 +131,11 @@ public class MainFrame extends JFrame {
                         }
 
                         if (e.getModifiers() == InputEvent.SHIFT_MASK) {
-                            board.setDead(fy, fx);
+                            board.set(fy, fx, CellType.DEAD);
                         } else if (e.getModifiers() == InputEvent.CTRL_MASK) {
-                            board.setLive(fy, fx, 1);
+                            board.set(fy, fx, CellType.BLUE);
                         } else if (e.getModifiers() == InputEvent.ALT_MASK) {
-                            board.setLive(fy, fx, 2);
+                            board.set(fy, fx, CellType.RED);
                         }
                         setColorOfCell(fy, fx);
                         cells[fy][fx].repaint();
@@ -181,9 +181,9 @@ public class MainFrame extends JFrame {
 
     private void setColorOfCell(int y, int x) {
         switch (board.getCellColor(y, x)) {
-            case 0: cells[y][x].setBackground(Color.white); break;
-            case 1: cells[y][x].setBackground(Color.blue); break;
-            case 2: cells[y][x].setBackground(Color.red); break;
+            case 0: cells[y][x].setBackground(new Color(255, 255, 255)); break;
+            case 1: cells[y][x].setBackground(new Color(0,   0,   255)); break;
+            case 2: cells[y][x].setBackground(new Color(255, 0,   0));   break;
             case 3: cells[y][x].setBackground(new Color(200, 200, 255)); break;
             case 4: cells[y][x].setBackground(new Color(255, 200, 200)); break;
             default: throw new IllegalArgumentException();
@@ -204,7 +204,7 @@ public class MainFrame extends JFrame {
             }
         }
 
-        return new Board(initBoard);
+        return new Board(new Matrix(initBoard));
     }
 
 }
