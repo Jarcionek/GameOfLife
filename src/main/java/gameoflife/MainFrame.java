@@ -181,9 +181,11 @@ public class MainFrame extends JFrame {
 
     private void setColorOfCell(int y, int x) {
         switch (board.getCellColor(y, x)) {
-            case 2: cells[y][x].setBackground(Color.red); break;
-            case 1: cells[y][x].setBackground(Color.blue); break;
             case 0: cells[y][x].setBackground(Color.white); break;
+            case 1: cells[y][x].setBackground(Color.blue); break;
+            case 2: cells[y][x].setBackground(Color.red); break;
+            case 3: cells[y][x].setBackground(new Color(200, 200, 255)); break;
+            case 4: cells[y][x].setBackground(new Color(255, 200, 200)); break;
             default: throw new IllegalArgumentException();
         }
     }

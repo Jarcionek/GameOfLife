@@ -14,14 +14,22 @@ public class Board {
     }
 
     public void nextGeneration() {
-        Set<Cell> deadCells = new HashSet<>();
+        Set<ColorCell> deadCells = new HashSet<>();
         Set<ColorCell> liveCells = new HashSet<>();
 
         for (Cell cell : allCells()) {
             int liveNeighbours = liveNeighboursOf(cell);
             if (isLive(cell)) {
                 if (liveNeighbours < 2 || 3 < liveNeighbours) {
-                    deadCells.add(cell);
+
+                    if (board[cell.y][cell.x] == gameoflife.Cell.BLUE.value) {
+                        deadCells.add(new ColorCell(cell.y, cell.x, gameoflife.Cell.BLUE_TRAIL.value));
+                    } else if (board[cell.y][cell.x] == gameoflife.Cell.RED.value) {
+                        deadCells.add(new ColorCell(cell.y, cell.x, gameoflife.Cell.RED_TRAIL.value));
+                    } else {
+                        throw new RuntimeException("shouldn't happen agpdsagjsa0igsg");
+                    }
+
                 } else {
                     //TODO Jarek: change color?
                 }
@@ -68,9 +76,9 @@ public class Board {
     }
 
 
-    private void updateBoard(Set<Cell> deadCells, Set<ColorCell> liveCells) {
-        for (Cell cell : deadCells) {
-            board[cell.y][cell.x] = 0;
+    private void updateBoard(Set<ColorCell> deadCells, Set<ColorCell> liveCells) {
+        for (ColorCell cell : deadCells) {
+            board[cell.y][cell.x] = cell.color;
         }
         for (ColorCell cell : liveCells) {
             board[cell.y][cell.x] = cell.color;
@@ -119,7 +127,7 @@ public class Board {
     }
 
     private boolean cellIsLive(int y, int x) {
-        return board[y][x] != 0;
+        return board[y][x] == 1 || board[y][x] == 2;
     }
 
     private Iterable<Cell> allCells() {
