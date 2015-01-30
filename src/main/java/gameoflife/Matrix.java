@@ -13,12 +13,19 @@ public class Matrix {
 
         this.cells = new CellType[width + 2][height + 2];
 
+        // set all to dead
+        for (int y = 0; y < width + 2; y++) {
+            for (int x = 0; x < height + 2; x++) {
+                this.cells[y][x] = CellType.DEAD;
+            }
+        }
+
+        // set all except margin to whatever was passed in
         for (int y = 0; y < width; y++) {
             for (int x = 0; x < height; x++) {
                 this.cells[y + 1][x + 1] = CellType.valueOf(cells[y][x]);
             }
         }
-
     }
 
 

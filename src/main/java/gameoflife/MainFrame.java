@@ -33,6 +33,7 @@ public class MainFrame extends JFrame {
     private static final int BOARD_HEIGHT = 60;
 
     private final Board board;
+    private final Matrix matrix;
 
     private final JComponent[][] cells;
     private final JLabel generationCountLabel = new JLabel("0");
@@ -45,7 +46,19 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         super("Conway's Game of Life");
 
-        this.board = initBoard();
+        int[][] initBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
+        Random random = new Random();
+        for (int y = 0; y < BOARD_HEIGHT; y++) {
+            for (int x = 0; x < BOARD_WIDTH; x++) {
+                if (random.nextInt(3) > 1) {
+                    initBoard[y][x] = 1 + random.nextInt(2);
+                } else {
+                    initBoard[y][x] = 0;
+                }
+            }
+        }
+        this.matrix = new Matrix(initBoard);
+        this.board = new Board(matrix);
         this.cells = new JLabel[BOARD_HEIGHT][BOARD_WIDTH];
 
         createComponents();
@@ -131,14 +144,13 @@ public class MainFrame extends JFrame {
                         }
 
                         if (e.getModifiers() == InputEvent.SHIFT_MASK) {
-                            board.set(fy, fx, CellType.DEAD);
+                            matrix.set(fy, fx, CellType.DEAD.value);
                         } else if (e.getModifiers() == InputEvent.CTRL_MASK) {
-                            board.set(fy, fx, CellType.BLUE);
+                            matrix.set(fy, fx, CellType.BLUE.value);
                         } else if (e.getModifiers() == InputEvent.ALT_MASK) {
-                            board.set(fy, fx, CellType.RED);
+                            matrix.set(fy, fx, CellType.RED.value);
                         }
-                        setColorOfCell(fy, fx);
-                        cells[fy][fx].repaint();
+                        refreshCells();
                     }
                 });
             }
@@ -173,38 +185,10 @@ public class MainFrame extends JFrame {
 
         for (int y = 0; y < BOARD_HEIGHT; y++) {
             for (int x = 0; x < BOARD_WIDTH; x++) {
-                setColorOfCell(y, x);
+                cells[y][x].setBackground(matrix.get(y, x).color());
             }
         }
         this.repaint();
-    }
-
-    private void setColorOfCell(int y, int x) {
-        switch (board.getCellColor(y, x)) {
-            case 0: cells[y][x].setBackground(new Color(255, 255, 255)); break;
-            case 1: cells[y][x].setBackground(new Color(0,   0,   255)); break;
-            case 2: cells[y][x].setBackground(new Color(255, 0,   0));   break;
-            case 3: cells[y][x].setBackground(new Color(200, 200, 255)); break;
-            case 4: cells[y][x].setBackground(new Color(255, 200, 200)); break;
-            default: throw new IllegalArgumentException();
-        }
-    }
-
-    private Board initBoard() {
-        int[][] initBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
-
-        Random random = new Random();
-        for (int y = 0; y < BOARD_HEIGHT; y++) {
-            for (int x = 0; x < BOARD_WIDTH; x++) {
-                if (random.nextInt(3) > 1) {
-                    initBoard[y][x] = 1 + random.nextInt(2);
-                } else {
-                    initBoard[y][x] = 0;
-                }
-            }
-        }
-
-        return new Board(new Matrix(initBoard));
     }
 
 }

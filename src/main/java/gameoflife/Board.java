@@ -44,15 +44,6 @@ public class Board {
         updateBoard(deadCells, liveCells);
     }
 
-    public int getCellColor(int y, int x) {
-        return matrix.get(y, x).value;
-    }
-
-    public void set(int y, int x, CellType cell) {
-        matrix.set(y, x, cell.value);
-    }
-
-
     private void updateBoard(Set<Cell> deadCells, Set<Cell> liveCells) {
         for (Cell cell : deadCells) {
             matrix.set(cell.y(), cell.x(), cell.type());
@@ -104,7 +95,7 @@ public class Board {
     }
 
     private boolean isLive(int y, int x) {
-        return matrix.get(y, x) == CellType.RED || matrix.get(y, x) == CellType.BLUE;
+        return matrix.get(y, x).isLive();
     }
 
     private Iterable<Cell> allCells() {
