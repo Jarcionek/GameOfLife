@@ -2,6 +2,7 @@ package gameoflife;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,6 +33,8 @@ public class MainFrame extends JFrame {
     private final JTextField autoPlayDelayField = new JTextField("100", 10); //TODO  Jarek: change it to slider
     private final JButton nextButton = new JButton("next");
 
+    private final JComboBox<CellType> drawingSelectionComboBox;
+
     private SwingWorker<Object, Object> autoPlaySwingWorker;
 
     public MainFrame() {
@@ -49,9 +52,11 @@ public class MainFrame extends JFrame {
             }
         }
 
+        this.drawingSelectionComboBox = new JComboBox<>(CellType.values());
+
         Matrix matrix = new Matrix(initBoard);
         this.game = new Game(matrix);
-        this.cells = new GridOfLabels(CELL_SIZE, matrix);
+        this.cells = new GridOfLabels(CELL_SIZE, matrix, drawingSelectionComboBox);
 
         createComponents();
         refreshGui();
@@ -86,6 +91,7 @@ public class MainFrame extends JFrame {
         });
 
         JPanel buttonsPanel = new JPanel();
+        buttonsPanel.add(drawingSelectionComboBox);
         buttonsPanel.add(generationCountLabel);
         buttonsPanel.add(nextButton);
         buttonsPanel.add(autoPlayCheckBox);
