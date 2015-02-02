@@ -10,8 +10,6 @@ import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CancellationException;
@@ -24,15 +22,17 @@ public class MainFrame extends JFrame {
     private static final int BOARD_WIDTH = 100;
     private static final int BOARD_HEIGHT = 60;
 
-    private final Board board;
+    private final Game game;
     private final GridOfLabels cells;
 
     private final JLabel generationCountLabel = new JLabel("0");
     private int generationCount = 0;
 
     private final JCheckBox autoPlayCheckBox = new JCheckBox("autoplay (delays in ms):");
-    private final JTextField autoPlayDelayField = new JTextField("100", 10);
+    private final JTextField autoPlayDelayField = new JTextField("100", 10); //TODO  Jarek: change it to slider
     private final JButton nextButton = new JButton("next");
+
+    private SwingWorker<Object, Object> autoPlaySwingWorker;
 
     public MainFrame() {
         super("Conway's Game of Life");
@@ -50,7 +50,7 @@ public class MainFrame extends JFrame {
         }
 
         Matrix matrix = new Matrix(initBoard);
-        this.board = new Board(matrix);
+        this.game = new Game(matrix);
         this.cells = new GridOfLabels(CELL_SIZE, matrix);
 
         createComponents();
@@ -67,46 +67,16 @@ public class MainFrame extends JFrame {
         autoPlayCheckBox.setFont(new Font("Arial", Font.PLAIN, autoPlayCheckBox.getFont().getSize()));
         generationCountLabel.setFont(new Font("Arial", Font.PLAIN, generationCountLabel.getFont().getSize()));
 
-        autoPlayCheckBox.addActionListener(new ActionListener() {
-
-            private SwingWorker<Object, Object> swingWorker;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (autoPlayCheckBox.isSelected()) {
-                    nextButton.setEnabled(false);
-                    swingWorker = new SwingWorker<Object, Object>() {
-                        @Override
-                        protected Object doInBackground() throws Exception {
-                            while (!isCancelled()) {
-                                nextGeneration();
-                                publish(new Object());
-                                Thread.sleep(parseInt(autoPlayDelayField.getText()));
-                            }
-                            return null;
-                        }
-                        @Override
-                        protected void process(List<Object> chunks) {
-                            refreshGui();
-                        }
-                        @Override
-                        protected void done() {
-                            try {
-                                get();
-                            } catch (CancellationException e) {
-                                // cancelled by unchecking the box
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    };
-                    cells.setMouseListenerEnabled(false);
-                    swingWorker.execute();
-                } else {
-                    swingWorker.cancel(false);
-                    cells.setMouseListenerEnabled(true);
-                    nextButton.setEnabled(true);
-                }
+        autoPlayCheckBox.addActionListener(click -> {
+            if (autoPlayCheckBox.isSelected()) {
+                nextButton.setEnabled(false);
+                autoPlaySwingWorker = new AutoPlaySwingWorker();
+                cells.setMouseListenerEnabled(false);
+                autoPlaySwingWorker.execute();
+            } else {
+                autoPlaySwingWorker.cancel(false);
+                cells.setMouseListenerEnabled(true);
+                nextButton.setEnabled(true);
             }
         });
 
@@ -128,13 +98,43 @@ public class MainFrame extends JFrame {
     }
 
     private void nextGeneration() {
-        board.nextGeneration();
+        game.nextGeneration();
         generationCount++;
     }
 
     private void refreshGui() {
         generationCountLabel.setText("generation " + generationCount);
         cells.refreshCells();
+    }
+
+    private class AutoPlaySwingWorker extends SwingWorker<Object, Object> {
+
+        @Override
+        protected Object doInBackground() throws Exception {
+            while (!isCancelled()) {
+                nextGeneration();
+                publish(new Object());
+                Thread.sleep(parseInt(autoPlayDelayField.getText()));
+            }
+            return null;
+        }
+
+        @Override
+        protected void process(List<Object> chunks) {
+            refreshGui();
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+            } catch (CancellationException e) {
+                // cancelled by unchecking the box
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
 }

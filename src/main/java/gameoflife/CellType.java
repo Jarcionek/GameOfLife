@@ -9,6 +9,7 @@ public enum CellType {
     RED       (2, true,  new Color(255, 0,   0  )),
     BLUE_TRAIL(3, false, new Color(200, 200, 255)),
     RED_TRAIL (4, false, new Color(255, 200, 200));
+    //TODO  Jarek: add walls (color = black)
 
     private final int value;
     private final boolean live;
