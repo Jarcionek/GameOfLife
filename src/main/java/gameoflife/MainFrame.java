@@ -6,16 +6,16 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JSlider;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CancellationException;
-
-import static java.lang.Integer.parseInt;
 
 public class MainFrame extends JFrame {
 
@@ -29,8 +29,8 @@ public class MainFrame extends JFrame {
     private final JLabel generationCountLabel = new JLabel("0");
     private int generationCount = 0;
 
-    private final JCheckBox autoPlayCheckBox = new JCheckBox("autoplay (delays in ms):");
-    private final JTextField autoPlayDelayField = new JTextField("100", 10); //TODO  Jarek: change it to slider
+    private final JCheckBox autoPlayCheckBox = new JCheckBox("autoplay");
+    private final JSlider autoPlaySlider = new JSlider(1, 201, 100);
     private final JButton nextButton = new JButton("next");
 
     private final JComboBox<CellType> drawingSelectionComboBox;
@@ -58,6 +58,15 @@ public class MainFrame extends JFrame {
         Matrix matrix = new Matrix(initBoard);
         this.game = new Game(matrix);
         this.cells = new GridOfLabels(CELL_SIZE, matrix, drawingSelectionComboBox);
+
+        autoPlaySlider.setMajorTickSpacing(10);
+        autoPlaySlider.setPaintTicks(true);
+        Dictionary<Integer, JLabel> dictionary = new Hashtable<>();
+        dictionary.put(1, new JLabel("0ms") {{setFont(new Font("Arial", Font.PLAIN, 10));}});
+        dictionary.put(101, new JLabel("100ms") {{setFont(new Font("Arial", Font.PLAIN, 10));}});
+        dictionary.put(201, new JLabel("200ms") {{setFont(new Font("Arial", Font.PLAIN, 10));}});
+        autoPlaySlider.setLabelTable(dictionary);
+        autoPlaySlider.setPaintLabels(true);
 
         createComponents();
         refreshGui();
@@ -96,7 +105,8 @@ public class MainFrame extends JFrame {
         buttonsPanel.add(generationCountLabel);
         buttonsPanel.add(nextButton);
         buttonsPanel.add(autoPlayCheckBox);
-        buttonsPanel.add(autoPlayDelayField);
+        buttonsPanel.add(new JLabel("delay:") {{setFont(new Font("Arial", Font.PLAIN, autoPlayCheckBox.getFont().getSize()));}});
+        buttonsPanel.add(autoPlaySlider);
 
         JPanel centralPanel = new JPanel(new BorderLayout());
         centralPanel.add(cells, BorderLayout.CENTER);
@@ -121,7 +131,7 @@ public class MainFrame extends JFrame {
             while (!isCancelled()) {
                 nextGeneration();
                 publish(new Object());
-                Thread.sleep(parseInt(autoPlayDelayField.getText()));
+                Thread.sleep(autoPlaySlider.getValue());
             }
             return null;
         }
