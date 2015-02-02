@@ -4,20 +4,22 @@ import java.awt.Color;
 
 public enum CellType {
 
-    DEAD      (0, false, new Color(255, 255, 255)),
-    BLUE      (1, true,  new Color(0,   0,   255)),
-    RED       (2, true,  new Color(255, 0,   0  )),
-    BLUE_TRAIL(3, false, new Color(200, 200, 255)),
-    RED_TRAIL (4, false, new Color(255, 200, 200));
-    //TODO  Jarek: add walls (color = black)
+    DEAD      (0, false, false, new Color(255, 255, 255)),
+    WALL      (1, false, true,  new Color(0,   0,   0)),
+    BLUE      (2, true,  false, new Color(0,   0,   255)),
+    RED       (3, true,  false, new Color(255, 0,   0  )),
+    BLUE_TRAIL(4, false, false, new Color(200, 200, 255)),
+    RED_TRAIL (5, false, false, new Color(255, 200, 200));
 
     private final int value;
-    private final boolean live;
+    private final boolean isLive;
+    private final boolean isFixed;
     private final Color color;
 
-    private CellType(int value, boolean live, Color color) {
+    private CellType(int value, boolean isLive, boolean isFixed, Color color) {
         this.value = value;
-        this.live = live;
+        this.isLive = isLive;
+        this.isFixed = isFixed;
         this.color = color;
     }
 
@@ -35,7 +37,11 @@ public enum CellType {
     }
 
     public boolean isLive() {
-        return live;
+        return isLive;
+    }
+
+    public boolean isFixed() {
+        return isFixed;
     }
 
     public Color color() {

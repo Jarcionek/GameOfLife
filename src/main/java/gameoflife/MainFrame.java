@@ -45,9 +45,10 @@ public class MainFrame extends JFrame {
         for (int y = 0; y < BOARD_HEIGHT; y++) {
             for (int x = 0; x < BOARD_WIDTH; x++) {
                 if (random.nextInt(3) > 1) {
-                    initBoard[y][x] = 1 + random.nextInt(2);
-                } else {
-                    initBoard[y][x] = 0;
+                    switch (random.nextInt(2)) {
+                        case 0: initBoard[y][x] = CellType.RED.value(); break;
+                        case 1: initBoard[y][x] = CellType.BLUE.value(); break;
+                    }
                 }
             }
         }

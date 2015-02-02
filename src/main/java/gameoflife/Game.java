@@ -18,6 +18,9 @@ public class Game {
         Set<Cell> liveCells = new HashSet<>();
 
         for (Cell cell : allCells()) {
+            if (isFixed(cell)) {
+                continue;
+            }
             int liveNeighbours = liveNeighboursOf(cell);
             if (isLive(cell)) {
                 if (liveNeighbours < 2 || 3 < liveNeighbours) {
@@ -96,6 +99,10 @@ public class Game {
 
     private boolean isLive(int y, int x) {
         return matrix.get(y, x).isLive();
+    }
+
+    private boolean isFixed(Cell cell) {
+        return matrix.get(cell.y(), cell.x()).isFixed();
     }
 
     private Iterable<Cell> allCells() {
