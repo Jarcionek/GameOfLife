@@ -1,8 +1,10 @@
 package gameoflife;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Game {
@@ -45,6 +47,20 @@ public class Game {
         }
 
         updateBoard(deadCells, liveCells);
+    }
+
+    public Map<CellType, Integer> getStatistics() {
+        Map<CellType, Integer> map = new EnumMap<>(CellType.class);
+
+        for (CellType cellType : CellType.values()) {
+            map.put(cellType, 0);
+        }
+
+        for (Cell cell : allCells()) {
+            map.put(cell.type(), map.get(cell.type()) + 1);
+        }
+
+        return map;
     }
 
     private void updateBoard(Set<Cell> deadCells, Set<Cell> liveCells) {

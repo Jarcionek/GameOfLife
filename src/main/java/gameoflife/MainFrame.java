@@ -27,18 +27,17 @@ public class MainFrame extends JFrame {
     private static final int BOARD_HEIGHT = 60;
 
     private final Game game;
-    private final GridOfLabels cells;
-
-    private final JLabel generationCountLabel = new PlainFontLabel("0");
-    private int generationCount = 0;
-
-    private final JCheckBox autoPlayCheckBox = new JCheckBox("autoplay");
-    private final JSlider autoPlaySlider = new JSlider(1, 201, 100);
-    private final JButton nextButton = new JButton("next");
-
-    private final JComboBox<CellType> drawingSelectionComboBox;
 
     private SwingWorker<Object, Object> autoPlaySwingWorker;
+    private int generationCount = 0; //TODO Jarek: move to Game
+
+    private final GridOfLabels cells;
+    private final JComboBox<CellType> drawingSelectionComboBox;
+    private final JLabel generationCountLabel = new PlainFontLabel("0");
+    private final JButton nextButton = new JButton("next");
+    private final JCheckBox autoPlayCheckBox = new JCheckBox("autoplay");
+    private final JSlider autoPlaySlider = new JSlider(1, 201, 100);
+    private final StatisticsPanel statisticsPanel = new StatisticsPanel();
 
     public MainFrame() {
         super("Conway's Game of Life");
@@ -109,6 +108,7 @@ public class MainFrame extends JFrame {
         buttonsPanel.add(autoPlayCheckBox);
         buttonsPanel.add(new PlainFontLabel("delay:"));
         buttonsPanel.add(autoPlaySlider);
+        buttonsPanel.add(statisticsPanel);
 
         JPanel centralPanel = new JPanel(new BorderLayout());
         centralPanel.add(cells, BorderLayout.CENTER);
@@ -137,6 +137,7 @@ public class MainFrame extends JFrame {
 
     private void refreshGui() {
         generationCountLabel.setText("generation " + generationCount);
+        statisticsPanel.update(game.getStatistics());
         cells.refreshCells();
     }
 
