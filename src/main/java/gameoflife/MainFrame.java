@@ -5,8 +5,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
@@ -112,6 +116,20 @@ public class MainFrame extends JFrame {
         centralPanel.add(cells, BorderLayout.CENTER);
         centralPanel.add(buttonsPanel, BorderLayout.SOUTH);
         setContentPane(centralPanel);
+
+        JMenuBar jMenuBar = new JMenuBar();
+        JMenu gameMenu = new JMenu("Game");
+        JMenuItem restartMenuItem = new JMenuItem("Restart");
+        restartMenuItem.addActionListener(click -> {
+            if (autoPlaySwingWorker != null) {
+                autoPlaySwingWorker.cancel(true);
+            }
+            dispose();
+            SwingUtilities.invokeLater(MainFrame::new);
+        });
+        gameMenu.add(restartMenuItem);
+        jMenuBar.add(gameMenu);
+        setJMenuBar(jMenuBar);
     }
 
     private void nextGeneration() {
