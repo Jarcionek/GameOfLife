@@ -4,18 +4,18 @@ public class Cell {
 
     private final int y;
     private final int x;
-    private final int color;
+    private final int value;
 
-    public Cell(int y, int x, int color) {
+    public Cell(int y, int x, int value) {
         this.y = y;
         this.x = x;
-        this.color = color;
+        this.value = value;
     }
 
-    public Cell(Cell cell, int color) {
+    public Cell(Cell cell, int value) {
         this.y = cell.y();
         this.x = cell.x();
-        this.color = color;
+        this.value = value;
     }
 
     public int y() {
@@ -26,8 +26,8 @@ public class Cell {
         return x;
     }
 
-    public int type() {
-        return color;
+    public int value() {
+        return value;
     }
 
 }

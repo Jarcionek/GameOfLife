@@ -10,7 +10,7 @@ public enum CellType {
     BLUE_TRAIL(3, false, new Color(200, 200, 255)),
     RED_TRAIL (4, false, new Color(255, 200, 200));
 
-    public final int value; //TODO Jarek: make private!
+    private final int value;
     private final boolean live;
     private final Color color;
 
@@ -27,6 +27,10 @@ public enum CellType {
             }
         }
         throw new IllegalArgumentException("No cell for value " + value);
+    }
+
+    public int value() {
+        return value;
     }
 
     public boolean isLive() {

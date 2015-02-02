@@ -144,11 +144,11 @@ public class MainFrame extends JFrame {
                         }
 
                         if (e.getModifiers() == InputEvent.SHIFT_MASK) {
-                            matrix.set(fy, fx, CellType.DEAD.value);
+                            matrix.set(fy, fx, CellType.DEAD.value());
                         } else if (e.getModifiers() == InputEvent.CTRL_MASK) {
-                            matrix.set(fy, fx, CellType.BLUE.value);
+                            matrix.set(fy, fx, CellType.BLUE.value());
                         } else if (e.getModifiers() == InputEvent.ALT_MASK) {
-                            matrix.set(fy, fx, CellType.RED.value);
+                            matrix.set(fy, fx, CellType.RED.value());
                         }
                         refreshCells();
                     }

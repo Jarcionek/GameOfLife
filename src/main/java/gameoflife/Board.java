@@ -23,9 +23,9 @@ public class Board {
                 if (liveNeighbours < 2 || 3 < liveNeighbours) {
 
                     if (matrix.get(cell.y(), cell.x()) == CellType.BLUE) {
-                        deadCells.add(new Cell(cell, CellType.BLUE_TRAIL.value));
+                        deadCells.add(new Cell(cell, CellType.BLUE_TRAIL.value()));
                     } else if (matrix.get(cell.y(), cell.x()) == CellType.RED) {
-                        deadCells.add(new Cell(cell, CellType.RED_TRAIL.value));
+                        deadCells.add(new Cell(cell, CellType.RED_TRAIL.value()));
                     } else {
                         throw new RuntimeException("shouldn't happen agpdsagjsa0igsg");
                     }
@@ -35,8 +35,8 @@ public class Board {
                 }
             } else {
                 if (liveNeighbours == 3) {
-                    int dominantColorOfNeighbours = dominantColorOfNeighbours(cell);
-                    liveCells.add(new Cell(cell, dominantColorOfNeighbours));
+                    int dominantValueOfNeighbours = dominantColorOfNeighbours(cell);
+                    liveCells.add(new Cell(cell, dominantValueOfNeighbours));
                 }
             }
         }
@@ -46,10 +46,10 @@ public class Board {
 
     private void updateBoard(Set<Cell> deadCells, Set<Cell> liveCells) {
         for (Cell cell : deadCells) {
-            matrix.set(cell.y(), cell.x(), cell.type());
+            matrix.set(cell.y(), cell.x(), cell.value());
         }
         for (Cell cell : liveCells) {
-            matrix.set(cell.y(), cell.x(), cell.type());
+            matrix.set(cell.y(), cell.x(), cell.value());
         }
     }
 
@@ -68,8 +68,8 @@ public class Board {
     }
 
     private int dominantColorOfNeighbours(Cell cell) {
-        int color_1 = 0;
-        int color_2 = 0;
+        int blueCount = 0;
+        int redCount = 0;
         //TODO Jarek: support for more colors
         for (int dy = -1; dy <= 1; dy++) {
             for (int dx = -1; dx <= 1; dx++) {
@@ -79,15 +79,15 @@ public class Board {
                 int x = cell.x() + dx;
                 int y = cell.y() + dy;
                 if (isLive(y, x)) {
-                    if (matrix.get(y, x).value == 1) {
-                        color_1++;
-                    } else if (matrix.get(y, x).value == 2) {
-                        color_2++;
+                    if (matrix.get(y, x) == CellType.BLUE) {
+                        blueCount++;
+                    } else if (matrix.get(y, x) == CellType.RED) {
+                        redCount++;
                     }
                 }
             }
         }
-        return color_1 > color_2 ? 1 : 2;
+        return blueCount > redCount ? CellType.BLUE.value() : CellType.RED.value();
     }
 
     private boolean isLive(Cell cell) {
