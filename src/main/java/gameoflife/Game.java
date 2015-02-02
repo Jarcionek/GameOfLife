@@ -26,9 +26,9 @@ public class Game {
                 if (liveNeighbours < 2 || 3 < liveNeighbours) {
 
                     if (matrix.get(cell.y(), cell.x()) == CellType.BLUE) {
-                        deadCells.add(new Cell(cell, CellType.BLUE_TRAIL.value()));
+                        deadCells.add(new Cell(cell, CellType.BLUE_TRAIL));
                     } else if (matrix.get(cell.y(), cell.x()) == CellType.RED) {
-                        deadCells.add(new Cell(cell, CellType.RED_TRAIL.value()));
+                        deadCells.add(new Cell(cell, CellType.RED_TRAIL));
                     } else {
                         throw new RuntimeException("shouldn't happen agpdsagjsa0igsg");
                     }
@@ -38,7 +38,7 @@ public class Game {
                 }
             } else {
                 if (liveNeighbours == 3) {
-                    int dominantValueOfNeighbours = dominantColorOfNeighbours(cell);
+                    CellType dominantValueOfNeighbours = dominantCellTypeOfNeighbours(cell);
                     liveCells.add(new Cell(cell, dominantValueOfNeighbours));
                 }
             }
@@ -49,10 +49,10 @@ public class Game {
 
     private void updateBoard(Set<Cell> deadCells, Set<Cell> liveCells) {
         for (Cell cell : deadCells) {
-            matrix.set(cell.y(), cell.x(), cell.value());
+            matrix.set(cell);
         }
         for (Cell cell : liveCells) {
-            matrix.set(cell.y(), cell.x(), cell.value());
+            matrix.set(cell);
         }
     }
 
@@ -70,7 +70,7 @@ public class Game {
         return count;
     }
 
-    private int dominantColorOfNeighbours(Cell cell) {
+    private CellType dominantCellTypeOfNeighbours(Cell cell) {
         int blueCount = 0;
         int redCount = 0;
         //TODO Jarek: support for more colors
@@ -90,7 +90,7 @@ public class Game {
                 }
             }
         }
-        return blueCount > redCount ? CellType.BLUE.value() : CellType.RED.value();
+        return blueCount > redCount ? CellType.BLUE : CellType.RED;
     }
 
     private boolean isLive(Cell cell) {
@@ -109,7 +109,7 @@ public class Game {
         List<Cell> allCells = new ArrayList<>();
         for (int y = 0; y < matrix.getHeight(); y++) {
             for (int x = 0; x < matrix.getWidth(); x++) {
-                allCells.add(new Cell(y, x, -1));
+                allCells.add(new Cell(y, x, matrix.get(y, x)));
             }
         }
         return allCells;

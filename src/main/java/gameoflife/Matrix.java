@@ -29,8 +29,8 @@ public class Matrix {
     }
 
 
-    public void set(int y, int x, int type) {
-        cells[y + 1][x + 1] = CellType.valueOf(type);
+    public void set(Cell cell) {
+        cells[cell.y() + 1][cell.x() + 1] = cell.type();
     }
 
     public CellType get(int y, int x) {

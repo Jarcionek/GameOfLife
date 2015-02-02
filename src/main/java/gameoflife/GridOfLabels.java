@@ -103,7 +103,7 @@ public class GridOfLabels extends JPanel {
             Component component = GridOfLabels.this.findComponentAt(point);
             if (component instanceof CellLabel) {
                 CellLabel cellLabel = (CellLabel) component;
-                matrix.set(cellLabel.y, cellLabel.x, ((CellType) drawingSelectionComboBox.getSelectedItem()).value());
+                matrix.set(new Cell(cellLabel.y, cellLabel.x, (CellType) drawingSelectionComboBox.getSelectedItem()));
                 refreshCells();
             }
         }
