@@ -14,7 +14,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -30,7 +29,7 @@ public class MainFrame extends JFrame {
     private final Game game;
     private final GridOfLabels cells;
 
-    private final JLabel generationCountLabel = new JLabel("0");
+    private final JLabel generationCountLabel = new PlainFontLabel("0");
     private int generationCount = 0;
 
     private final JCheckBox autoPlayCheckBox = new JCheckBox("autoplay");
@@ -66,9 +65,9 @@ public class MainFrame extends JFrame {
         autoPlaySlider.setMajorTickSpacing(10);
         autoPlaySlider.setPaintTicks(true);
         Dictionary<Integer, JLabel> dictionary = new Hashtable<>();
-        dictionary.put(1, new JLabel("0ms") {{setFont(new Font("Arial", Font.PLAIN, 10));}});
-        dictionary.put(101, new JLabel("100ms") {{setFont(new Font("Arial", Font.PLAIN, 10));}});
-        dictionary.put(201, new JLabel("200ms") {{setFont(new Font("Arial", Font.PLAIN, 10));}});
+        dictionary.put(1, new PlainFontLabel("0ms", 10));
+        dictionary.put(101, new PlainFontLabel("100ms", 10));
+        dictionary.put(201, new PlainFontLabel("200ms", 10));
         autoPlaySlider.setLabelTable(dictionary);
         autoPlaySlider.setPaintLabels(true);
 
@@ -83,8 +82,7 @@ public class MainFrame extends JFrame {
     }
 
     private void createComponents() {
-        autoPlayCheckBox.setFont(new Font("Arial", Font.PLAIN, autoPlayCheckBox.getFont().getSize()));
-        generationCountLabel.setFont(new Font("Arial", Font.PLAIN, generationCountLabel.getFont().getSize()));
+        autoPlayCheckBox.setFont(PlainFontLabel.DEFAULT_FONT);
 
         autoPlayCheckBox.addActionListener(click -> {
             if (autoPlayCheckBox.isSelected()) {
@@ -109,7 +107,7 @@ public class MainFrame extends JFrame {
         buttonsPanel.add(generationCountLabel);
         buttonsPanel.add(nextButton);
         buttonsPanel.add(autoPlayCheckBox);
-        buttonsPanel.add(new JLabel("delay:") {{setFont(new Font("Arial", Font.PLAIN, autoPlayCheckBox.getFont().getSize()));}});
+        buttonsPanel.add(new PlainFontLabel("delay:"));
         buttonsPanel.add(autoPlaySlider);
 
         JPanel centralPanel = new JPanel(new BorderLayout());
