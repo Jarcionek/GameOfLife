@@ -100,8 +100,8 @@ public class Board {
 
     private Iterable<Cell> allCells() {
         List<Cell> allCells = new ArrayList<>();
-        for (int y = 0; y < matrix.getWidth(); y++) {
-            for (int x = 0; x < matrix.getHeight(); x++) {
+        for (int y = 0; y < matrix.getHeight(); y++) {
+            for (int x = 0; x < matrix.getWidth(); x++) {
                 allCells.add(new Cell(y, x, -1));
             }
         }

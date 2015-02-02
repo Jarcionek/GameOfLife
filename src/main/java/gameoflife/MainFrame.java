@@ -1,9 +1,7 @@
 package gameoflife;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -11,15 +9,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CancellationException;
@@ -33,9 +25,8 @@ public class MainFrame extends JFrame {
     private static final int BOARD_HEIGHT = 60;
 
     private final Board board;
-    private final Matrix matrix;
+    private final GridOfLabels cells;
 
-    private final JComponent[][] cells;
     private final JLabel generationCountLabel = new JLabel("0");
     private int generationCount = 0;
 
@@ -57,12 +48,13 @@ public class MainFrame extends JFrame {
                 }
             }
         }
-        this.matrix = new Matrix(initBoard);
+
+        Matrix matrix = new Matrix(initBoard);
         this.board = new Board(matrix);
-        this.cells = new JLabel[BOARD_HEIGHT][BOARD_WIDTH];
+        this.cells = new GridOfLabels(CELL_SIZE, matrix);
 
         createComponents();
-        refreshCells();
+        refreshGui();
 
         pack();
         setLocationRelativeTo(null);
@@ -95,7 +87,7 @@ public class MainFrame extends JFrame {
                         }
                         @Override
                         protected void process(List<Object> chunks) {
-                            refreshCells();
+                            refreshGui();
                         }
                         @Override
                         protected void done() {
@@ -108,9 +100,11 @@ public class MainFrame extends JFrame {
                             }
                         }
                     };
+                    cells.setMouseListenerEnabled(false);
                     swingWorker.execute();
                 } else {
                     swingWorker.cancel(false);
+                    cells.setMouseListenerEnabled(true);
                     nextButton.setEnabled(true);
                 }
             }
@@ -118,7 +112,7 @@ public class MainFrame extends JFrame {
 
         nextButton.addActionListener(click -> {
             nextGeneration();
-            refreshCells();
+            refreshGui();
         });
 
         JPanel buttonsPanel = new JPanel();
@@ -127,52 +121,10 @@ public class MainFrame extends JFrame {
         buttonsPanel.add(autoPlayCheckBox);
         buttonsPanel.add(autoPlayDelayField);
 
-        JPanel boardPanel = new JPanel(new GridLayout(BOARD_HEIGHT, BOARD_WIDTH));
-        for (int y = 0; y < BOARD_HEIGHT; y++) {
-            for (int x = 0; x < BOARD_WIDTH; x++) {
-                boardPanel.add(cells[y][x] = new JLabel());
-                cells[y][x].setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
-                cells[y][x].setOpaque(true);
-                setBorder(y, x);
-                final int fy = y;
-                final int fx = x;
-                cells[y][x].addMouseMotionListener(new MouseAdapter() {
-                    @Override
-                    public void mouseMoved(MouseEvent e) {
-                        if (!nextButton.isEnabled()) { // i.e. if swing worker is running
-                            return;
-                        }
-
-                        if (e.getModifiers() == InputEvent.SHIFT_MASK) {
-                            matrix.set(fy, fx, CellType.DEAD.value());
-                        } else if (e.getModifiers() == InputEvent.CTRL_MASK) {
-                            matrix.set(fy, fx, CellType.BLUE.value());
-                        } else if (e.getModifiers() == InputEvent.ALT_MASK) {
-                            matrix.set(fy, fx, CellType.RED.value());
-                        }
-                        refreshCells();
-                    }
-                });
-            }
-        }
-
         JPanel centralPanel = new JPanel(new BorderLayout());
-        centralPanel.add(boardPanel, BorderLayout.CENTER);
+        centralPanel.add(cells, BorderLayout.CENTER);
         centralPanel.add(buttonsPanel, BorderLayout.SOUTH);
         setContentPane(centralPanel);
-    }
-
-    private void setBorder(int y, int x) {
-        Color color = Color.darkGray;
-        if (x == BOARD_WIDTH - 1 && y == BOARD_HEIGHT - 1) {
-            cells[y][x].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, color));
-        } else if (x == BOARD_WIDTH - 1) {
-            cells[y][x].setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, color));
-        } else if (y == BOARD_HEIGHT - 1) {
-            cells[y][x].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, color));
-        } else {
-            cells[y][x].setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, color));
-        }
     }
 
     private void nextGeneration() {
@@ -180,15 +132,9 @@ public class MainFrame extends JFrame {
         generationCount++;
     }
 
-    private void refreshCells() {
+    private void refreshGui() {
         generationCountLabel.setText("generation " + generationCount);
-
-        for (int y = 0; y < BOARD_HEIGHT; y++) {
-            for (int x = 0; x < BOARD_WIDTH; x++) {
-                cells[y][x].setBackground(matrix.get(y, x).color());
-            }
-        }
-        this.repaint();
+        cells.refreshCells();
     }
 
 }

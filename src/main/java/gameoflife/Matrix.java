@@ -2,27 +2,27 @@ package gameoflife;
 
 public class Matrix {
 
-    private final CellType[][] cells;
-    private final int width;
     private final int height;
+    private final int width;
+    private final CellType[][] cells;
 
     @SuppressWarnings("ManualArrayCopy")
     public Matrix(int[][] cells) {
-        width = cells.length;
-        height = cells[0].length;
+        height = cells.length;
+        width = cells[0].length;
 
-        this.cells = new CellType[width + 2][height + 2];
+        this.cells = new CellType[height + 2][width + 2];
 
         // set all to dead
-        for (int y = 0; y < width + 2; y++) {
-            for (int x = 0; x < height + 2; x++) {
+        for (int y = 0; y < height + 2; y++) {
+            for (int x = 0; x < width + 2; x++) {
                 this.cells[y][x] = CellType.DEAD;
             }
         }
 
         // set all except margin to whatever was passed in
-        for (int y = 0; y < width; y++) {
-            for (int x = 0; x < height; x++) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 this.cells[y + 1][x + 1] = CellType.valueOf(cells[y][x]);
             }
         }
