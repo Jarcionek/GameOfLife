@@ -12,12 +12,6 @@ public class Cell {
         this.cellType = cellType;
     }
 
-    public Cell(Cell cell, CellType cellType) {
-        this.y = cell.y();
-        this.x = cell.x();
-        this.cellType = cellType;
-    }
-
     public int y() {
         return y;
     }
@@ -28,6 +22,10 @@ public class Cell {
 
     public CellType type() {
         return cellType;
+    }
+
+    public Cell withType(CellType type) {
+        return new Cell(y, x, type);
     }
 
 }

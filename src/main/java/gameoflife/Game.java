@@ -18,8 +18,7 @@ public class Game {
     }
 
     public void nextGeneration() {
-        Set<Cell> deadCells = new HashSet<>();
-        Set<Cell> liveCells = new HashSet<>();
+        Set<Cell> cellsToUpdate = new HashSet<>();
 
         for (Cell cell : allCells()) {
             if (isFixed(cell)) {
@@ -30,25 +29,22 @@ public class Game {
                 if (liveNeighbours < 2 || 3 < liveNeighbours) {
 
                     if (matrix.get(cell.y(), cell.x()) == CellType.BLUE) {
-                        deadCells.add(new Cell(cell, CellType.BLUE_TRAIL));
+                        cellsToUpdate.add(cell.withType(CellType.BLUE_TRAIL));
                     } else if (matrix.get(cell.y(), cell.x()) == CellType.RED) {
-                        deadCells.add(new Cell(cell, CellType.RED_TRAIL));
+                        cellsToUpdate.add(cell.withType(CellType.RED_TRAIL));
                     } else {
-                        throw new RuntimeException("shouldn't happen agpdsagjsa0igsg");
+                        throw new IllegalStateException();
                     }
 
-                } else {
-                    //TODO Jarek: change color?
                 }
             } else {
                 if (liveNeighbours == 3) {
-                    CellType dominantValueOfNeighbours = dominantCellTypeOfNeighbours(cell);
-                    liveCells.add(new Cell(cell, dominantValueOfNeighbours));
+                    cellsToUpdate.add(cell.withType(dominantCellTypeOfNeighbours(cell)));
                 }
             }
         }
 
-        updateBoard(deadCells, liveCells);
+        cellsToUpdate.forEach(matrix::set);
         generationCount++;
     }
 
@@ -71,15 +67,6 @@ public class Game {
     }
 
 
-    private void updateBoard(Set<Cell> deadCells, Set<Cell> liveCells) {
-        for (Cell cell : deadCells) {
-            matrix.set(cell);
-        }
-        for (Cell cell : liveCells) {
-            matrix.set(cell);
-        }
-    }
-
     private int liveNeighboursOf(Cell cell) {
         int count = 0;
         for (int dy = -1; dy <= 1; dy++) {
@@ -97,7 +84,6 @@ public class Game {
     private CellType dominantCellTypeOfNeighbours(Cell cell) {
         int blueCount = 0;
         int redCount = 0;
-        //TODO Jarek: support for more colors
         for (int dy = -1; dy <= 1; dy++) {
             for (int dx = -1; dx <= 1; dx++) {
                 if (dy == 0 && dx == 0) {
