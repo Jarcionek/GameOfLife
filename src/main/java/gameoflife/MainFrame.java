@@ -14,62 +14,32 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CancellationException;
 
 public class MainFrame extends JFrame {
-
-    private static final int CELL_SIZE = 10;
-    private static final int BOARD_WIDTH = 100;
-    private static final int BOARD_HEIGHT = 60;
 
     private final Game game;
 
     private SwingWorker<Object, Object> autoPlaySwingWorker;
 
     private final GridOfLabels cells;
-    private final JComboBox<CellType> drawingSelectionComboBox;
+    private final JComboBox<CellType> drawingSelectionComboBox = new JComboBox<>(CellType.values());
     private final JLabel generationCountLabel = new PlainFontLabel("0");
     private final JButton nextButton = new JButton("next");
     private final JCheckBox autoPlayCheckBox = new JCheckBox("autoplay");
-    private final JSlider autoPlaySlider = new JSlider(1, 201, 100);
+    private final JSlider autoPlaySlider = new AutoPlaySlider();
     private final StatisticsPanel statisticsPanel = new StatisticsPanel();
 
-    public MainFrame() {
+    public MainFrame(Game game) {
         super("Conway's Game of Life");
 
-        int[][] initBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
-        Random random = new Random();
-        for (int y = 0; y < BOARD_HEIGHT; y++) {
-            for (int x = 0; x < BOARD_WIDTH; x++) {
-                if (random.nextInt(3) > 1) {
-                    switch (random.nextInt(2)) {
-                        case 0: initBoard[y][x] = CellType.RED.value(); break;
-                        case 1: initBoard[y][x] = CellType.BLUE.value(); break;
-                    }
-                }
-            }
-        }
+        this.game = game;
+        this.cells = new GridOfLabels(game.getMatrix(), drawingSelectionComboBox);
 
-        this.drawingSelectionComboBox = new JComboBox<>(CellType.values());
-
-        Matrix matrix = new Matrix(initBoard);
-        this.game = new Game(matrix);
-        this.cells = new GridOfLabels(CELL_SIZE, matrix, drawingSelectionComboBox);
-
-        autoPlaySlider.setMajorTickSpacing(10);
-        autoPlaySlider.setPaintTicks(true);
-        Dictionary<Integer, JLabel> dictionary = new Hashtable<>();
-        dictionary.put(1, new PlainFontLabel("0ms", 10));
-        dictionary.put(101, new PlainFontLabel("100ms", 10));
-        dictionary.put(201, new PlainFontLabel("200ms", 10));
-        autoPlaySlider.setLabelTable(dictionary);
-        autoPlaySlider.setPaintLabels(true);
-
-        createComponents();
+        customizeComponentsAndAddListeners();
+        createLayout();
+        createMenuBar();
         refreshGui();
 
         pack();
@@ -79,7 +49,7 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    private void createComponents() {
+    private void customizeComponentsAndAddListeners() {
         autoPlayCheckBox.setFont(PlainFontLabel.DEFAULT_FONT);
 
         autoPlayCheckBox.addActionListener(click -> {
@@ -99,7 +69,9 @@ public class MainFrame extends JFrame {
             game.nextGeneration();
             refreshGui();
         });
+    }
 
+    private void createLayout() {
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.add(drawingSelectionComboBox);
         buttonsPanel.add(generationCountLabel);
@@ -113,7 +85,9 @@ public class MainFrame extends JFrame {
         centralPanel.add(cells, BorderLayout.CENTER);
         centralPanel.add(buttonsPanel, BorderLayout.SOUTH);
         setContentPane(centralPanel);
+    }
 
+    private void createMenuBar() {
         JMenuBar jMenuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Game");
         JMenuItem restartMenuItem = new JMenuItem("Restart");
@@ -122,7 +96,7 @@ public class MainFrame extends JFrame {
                 autoPlaySwingWorker.cancel(true);
             }
             dispose();
-            SwingUtilities.invokeLater(MainFrame::new);
+            SwingUtilities.invokeLater(() -> Main.main(null));
         });
         gameMenu.add(restartMenuItem);
         jMenuBar.add(gameMenu);

@@ -62,6 +62,10 @@ public class Game {
         return map;
     }
 
+    public Matrix getMatrix() {
+        return matrix;
+    }
+
     public int getGenerationCount() {
         return generationCount;
     }

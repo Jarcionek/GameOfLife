@@ -23,7 +23,7 @@ public class GridOfLabels extends JPanel {
 
     private boolean mouseListenerEnabled = true;
 
-    public GridOfLabels(int cellSize, Matrix matrix, JComboBox<CellType> drawingSelectionComboBox) {
+    public GridOfLabels(Matrix matrix, JComboBox<CellType> drawingSelectionComboBox) {
         super(new GridLayout(matrix.getHeight(), matrix.getWidth()));
         this.drawingSelectionComboBox = drawingSelectionComboBox;
         this.height = matrix.getHeight();
@@ -34,7 +34,7 @@ public class GridOfLabels extends JPanel {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 add(cells[y][x] = new CellLabel(y, x));
-                cells[y][x].setPreferredSize(new Dimension(cellSize, cellSize));
+                cells[y][x].setPreferredSize(new Dimension(Main.CELL_SIZE, Main.CELL_SIZE));
                 cells[y][x].setOpaque(true);
                 setCellBorder(y, x);
             }
