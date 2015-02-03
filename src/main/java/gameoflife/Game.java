@@ -11,6 +11,8 @@ public class Game {
 
     private final Matrix matrix;
 
+    private int generationCount = 0;
+
     public Game(Matrix matrix) {
         this.matrix = matrix;
     }
@@ -47,6 +49,7 @@ public class Game {
         }
 
         updateBoard(deadCells, liveCells);
+        generationCount++;
     }
 
     public Map<CellType, Integer> getStatistics() {
@@ -62,6 +65,11 @@ public class Game {
 
         return map;
     }
+
+    public int getGenerationCount() {
+        return generationCount;
+    }
+
 
     private void updateBoard(Set<Cell> deadCells, Set<Cell> liveCells) {
         for (Cell cell : deadCells) {

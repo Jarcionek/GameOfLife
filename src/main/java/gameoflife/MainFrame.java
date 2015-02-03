@@ -29,7 +29,6 @@ public class MainFrame extends JFrame {
     private final Game game;
 
     private SwingWorker<Object, Object> autoPlaySwingWorker;
-    private int generationCount = 0; //TODO Jarek: move to Game
 
     private final GridOfLabels cells;
     private final JComboBox<CellType> drawingSelectionComboBox;
@@ -97,7 +96,7 @@ public class MainFrame extends JFrame {
         });
 
         nextButton.addActionListener(click -> {
-            nextGeneration();
+            game.nextGeneration();
             refreshGui();
         });
 
@@ -130,13 +129,8 @@ public class MainFrame extends JFrame {
         setJMenuBar(jMenuBar);
     }
 
-    private void nextGeneration() {
-        game.nextGeneration();
-        generationCount++;
-    }
-
     private void refreshGui() {
-        generationCountLabel.setText("generation " + generationCount);
+        generationCountLabel.setText("generation " + game.getGenerationCount());
         statisticsPanel.update(game.getStatistics());
         cells.refreshCells();
     }
@@ -146,7 +140,7 @@ public class MainFrame extends JFrame {
         @Override
         protected Object doInBackground() throws Exception {
             while (!isCancelled()) {
-                nextGeneration();
+                game.nextGeneration();
                 publish(new Object());
                 Thread.sleep(autoPlaySlider.getValue());
             }
