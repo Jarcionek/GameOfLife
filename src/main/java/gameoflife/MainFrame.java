@@ -40,7 +40,7 @@ public class MainFrame extends JFrame {
         super("Conway's Game of Life");
 
         this.game = game;
-        this.cells = new GridOfLabels(game.getMatrix(), drawingSelectionComboBox);
+        this.cells = new GridOfLabels(game.getMatrix(), insertingSelectionComboBox, drawingSelectionComboBox);
 
         customizeComponentsAndAddListeners();
         createLayout();

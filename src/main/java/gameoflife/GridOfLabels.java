@@ -19,12 +19,14 @@ public class GridOfLabels extends JPanel {
     private final CellLabel[][] cells;
     private final Matrix matrix;
 
+    private final JComboBox<Construct> insertingSelectionComboBox;
     private final JComboBox<CellType> drawingSelectionComboBox;
 
     private MouseListenerMode mouseListenerMode = MouseListenerMode.DISABLED;
 
-    public GridOfLabels(Matrix matrix, JComboBox<CellType> drawingSelectionComboBox) {
+    public GridOfLabels(Matrix matrix, JComboBox<Construct> insertingSelectionComboBox, JComboBox<CellType> drawingSelectionComboBox) {
         super(new GridLayout(matrix.getHeight(), matrix.getWidth()));
+        this.insertingSelectionComboBox = insertingSelectionComboBox;
         this.drawingSelectionComboBox = drawingSelectionComboBox;
         this.height = matrix.getHeight();
         this.width = matrix.getWidth();
@@ -43,6 +45,7 @@ public class GridOfLabels extends JPanel {
         CellDrawingMouseAdapter listener = new CellDrawingMouseAdapter();
         this.addMouseMotionListener(listener);
         this.addMouseListener(listener);
+        this.addMouseListener(new ConstructInsertingMouseAdapter());
     }
 
     public void refreshCells() {
@@ -106,6 +109,35 @@ public class GridOfLabels extends JPanel {
                 matrix.set(new Cell(cellLabel.y, cellLabel.x, (CellType) drawingSelectionComboBox.getSelectedItem()));
                 refreshCells();
             }
+        }
+
+    }
+
+    private class ConstructInsertingMouseAdapter extends MouseAdapter {
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (mouseListenerMode != MouseListenerMode.INSERTING) {
+                return;
+            }
+
+            Component component = GridOfLabels.this.findComponentAt(e.getPoint());
+            if (!(component instanceof CellLabel)) {
+                return;
+            }
+            final int fy = ((CellLabel) component).y;
+            final int fx = ((CellLabel) component).x;
+
+            int[][] pattern = ((Construct) insertingSelectionComboBox.getSelectedItem()).getPattern();
+            CellType cellType = (CellType) drawingSelectionComboBox.getSelectedItem();
+
+            for (int y = 0; y < pattern.length; y++) {
+                for (int x = 0; x < pattern[0].length; x++) {
+                    matrix.set(new Cell(fy + y, fx + x, cellType));
+                }
+            }
+
+            refreshCells();
         }
 
     }
