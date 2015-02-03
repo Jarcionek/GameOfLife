@@ -133,7 +133,9 @@ public class GridOfLabels extends JPanel {
 
             for (int y = 0; y < pattern.length; y++) {
                 for (int x = 0; x < pattern[0].length; x++) {
-                    matrix.set(new Cell(fy + y, fx + x, cellType));
+                    if (pattern[y][x] == 1) {
+                        matrix.set(new Cell(fy + y, fx + x, cellType));
+                    }
                 }
             }
 
