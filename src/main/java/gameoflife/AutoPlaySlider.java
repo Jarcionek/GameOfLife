@@ -15,9 +15,10 @@ public class AutoPlaySlider extends JSlider {
         dictionary.put(100, new PlainFontLabel("100ms", 10));
         dictionary.put(200, new PlainFontLabel("200ms", 10));
 
+        setLabelTable(dictionary);
         setMajorTickSpacing(10);
         setPaintTicks(true);
-        setLabelTable(dictionary);
+        setSnapToTicks(true);
         setPaintLabels(true);
     }
 

@@ -21,7 +21,7 @@ public class GridOfLabels extends JPanel {
 
     private final JComboBox<CellType> drawingSelectionComboBox;
 
-    private boolean mouseListenerEnabled = true;
+    private MouseListenerMode mouseListenerMode = MouseListenerMode.DISABLED;
 
     public GridOfLabels(Matrix matrix, JComboBox<CellType> drawingSelectionComboBox) {
         super(new GridLayout(matrix.getHeight(), matrix.getWidth()));
@@ -54,8 +54,8 @@ public class GridOfLabels extends JPanel {
         this.repaint();
     }
 
-    public void setMouseListenerEnabled(boolean mouseListenerEnabled) {
-        this.mouseListenerEnabled = mouseListenerEnabled;
+    public void setMouseListenerMode(MouseListenerMode mouseListenerMode) {
+        this.mouseListenerMode = mouseListenerMode;
     }
 
     private void setCellBorder(int y, int x) {
@@ -96,7 +96,7 @@ public class GridOfLabels extends JPanel {
         }
 
         private void paintCell(Point point) {
-            if (!mouseListenerEnabled) {
+            if (mouseListenerMode != MouseListenerMode.DRAWING) {
                 return;
             }
 

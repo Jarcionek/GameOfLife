@@ -4,11 +4,13 @@ import java.util.Random;
 
 public class Main {
 
-    private static final int BOARD_WIDTH = 100;
-    private static final int BOARD_HEIGHT = 60;
+    private static final int BOARD_WIDTH = 160;
+    private static final int BOARD_HEIGHT = 80;
     public static final int CELL_SIZE = 10;
 
     public static void main(String[] args) {
+        enableWorkAroundSwingBugs();
+
         int[][] initBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
         Random random = new Random();
         for (int y = 0; y < BOARD_HEIGHT; y++) {
@@ -23,6 +25,10 @@ public class Main {
         }
 
         new MainFrame(new Game(new Matrix(initBoard)));
+    }
+
+    private static void enableWorkAroundSwingBugs() {
+        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     }
 
 }
