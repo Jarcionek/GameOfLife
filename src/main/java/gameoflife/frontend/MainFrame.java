@@ -23,6 +23,7 @@ import java.util.concurrent.CancellationException;
 
 import static gameoflife.Constants.BOARD_HEIGHT;
 import static gameoflife.Constants.BOARD_WIDTH;
+import static gameoflife.backend.Matrix.emptyMatrix;
 import static gameoflife.backend.Matrix.randomMatrix;
 
 public class MainFrame extends JFrame {
@@ -98,17 +99,26 @@ public class MainFrame extends JFrame {
 
     private void createMenuBar() {
         JMenuBar jMenuBar = new JMenuBar();
-        JMenu gameMenu = new JMenu("Game");
-        JMenuItem restartMenuItem = new JMenuItem("Restart");
-        restartMenuItem.addActionListener(click -> {
+        JMenu newGameMenu = new JMenu("New Game");
+        JMenuItem blankGridMenuItem = new JMenuItem("Blank Grid");
+        blankGridMenuItem.addActionListener(click -> {
+            if (autoPlaySwingWorker != null) {
+                autoPlaySwingWorker.cancel(true);
+            }
+            dispose();
+            SwingUtilities.invokeLater(() -> new MainFrame(new Game(emptyMatrix(BOARD_HEIGHT, BOARD_WIDTH))));
+        });
+        newGameMenu.add(blankGridMenuItem);
+        JMenuItem randomGridMenuItem = new JMenuItem("Random Grid");
+        randomGridMenuItem.addActionListener(click -> {
             if (autoPlaySwingWorker != null) {
                 autoPlaySwingWorker.cancel(true);
             }
             dispose();
             SwingUtilities.invokeLater(() -> new MainFrame(new Game(randomMatrix(BOARD_HEIGHT, BOARD_WIDTH))));
         });
-        gameMenu.add(restartMenuItem);
-        jMenuBar.add(gameMenu);
+        newGameMenu.add(randomGridMenuItem);
+        jMenuBar.add(newGameMenu);
         setJMenuBar(jMenuBar);
     }
 
