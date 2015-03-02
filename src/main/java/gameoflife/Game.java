@@ -121,8 +121,8 @@ public class Game {
 
     private Iterable<Cell> allCells() {
         List<Cell> allCells = new ArrayList<>();
-        for (int y = 0; y < matrix.getHeight(); y++) {
-            for (int x = 0; x < matrix.getWidth(); x++) {
+        for (int y = 0; y < matrix.height(); y++) {
+            for (int x = 0; x < matrix.width(); x++) {
                 allCells.add(new Cell(y, x, matrix.get(y, x)));
             }
         }

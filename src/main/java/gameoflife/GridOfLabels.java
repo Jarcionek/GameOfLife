@@ -14,9 +14,7 @@ import java.awt.event.MouseEvent;
 
 public class GridOfLabels extends JPanel {
 
-    private final int height;
-    private final int width;
-    private final CellLabel[][] cells;
+    private final TwoDimensionalArray<CellLabel> cells;
     private final Matrix matrix;
 
     private final JComboBox<Construct> insertingSelectionComboBox;
@@ -25,33 +23,36 @@ public class GridOfLabels extends JPanel {
     private MouseListenerMode mouseListenerMode = MouseListenerMode.DISABLED;
 
     public GridOfLabels(Matrix matrix, JComboBox<Construct> insertingSelectionComboBox, JComboBox<CellType> drawingSelectionComboBox) {
-        super(new GridLayout(matrix.getHeight(), matrix.getWidth()));
+        super(new GridLayout(matrix.height(), matrix.width()));
         this.insertingSelectionComboBox = insertingSelectionComboBox;
         this.drawingSelectionComboBox = drawingSelectionComboBox;
-        this.height = matrix.getHeight();
-        this.width = matrix.getWidth();
-        this.cells = new CellLabel[height][width];
+        this.cells = new TwoDimensionalArray<>(matrix.height(), matrix.width(), new CellLabel(-1, -1));
         this.matrix = matrix;
 
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                add(cells[y][x] = new CellLabel(y, x));
-                cells[y][x].setPreferredSize(new Dimension(Main.CELL_SIZE, Main.CELL_SIZE));
-                cells[y][x].setOpaque(true);
+        for (int y = 0; y < cells.height(); y++) {
+            for (int x = 0; x < cells.width(); x++) {
+                CellLabel label = new CellLabel(y, x);
+                label.setPreferredSize(new Dimension(Main.CELL_SIZE, Main.CELL_SIZE));
+                label.setOpaque(true);
                 setCellBorder(y, x);
+                cells.set(y, x, label);
+                add(label);
             }
         }
 
-        CellDrawingMouseAdapter listener = new CellDrawingMouseAdapter();
-        this.addMouseMotionListener(listener);
-        this.addMouseListener(listener);
-        this.addMouseListener(new ConstructInsertingMouseAdapter());
+        CellDrawingMouseAdapter cellDrawingMouseAdapter = new CellDrawingMouseAdapter();
+        this.addMouseListener(cellDrawingMouseAdapter);
+        this.addMouseMotionListener(cellDrawingMouseAdapter);
+
+        ConstructInsertingMouseAdapter constructInsertingMouseAdapter = new ConstructInsertingMouseAdapter();
+        this.addMouseListener(constructInsertingMouseAdapter);
+        this.addMouseMotionListener(constructInsertingMouseAdapter);
     }
 
     public void refreshCells() {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                cells[y][x].setBackground(matrix.get(y, x).color());
+        for (int y = 0; y < matrix.height(); y++) {
+            for (int x = 0; x < matrix.width(); x++) {
+                cells.get(y, x).setBackground(matrix.get(y, x).color());
             }
         }
         this.repaint();
@@ -63,14 +64,14 @@ public class GridOfLabels extends JPanel {
 
     private void setCellBorder(int y, int x) {
         Color color = Color.darkGray;
-        if (x == width - 1 && y == height - 1) {
-            cells[y][x].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, color));
-        } else if (x == width - 1) {
-            cells[y][x].setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, color));
-        } else if (y == height - 1) {
-            cells[y][x].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, color));
+        if (x == matrix.width() - 1 && y == matrix.height() - 1) {
+            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, color));
+        } else if (x == matrix.width() - 1) {
+            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, color));
+        } else if (y == matrix.height() - 1) {
+            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, color));
         } else {
-            cells[y][x].setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, color));
+            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, color));
         }
     }
 
@@ -140,6 +141,31 @@ public class GridOfLabels extends JPanel {
             }
 
             refreshCells();
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            if (mouseListenerMode != MouseListenerMode.INSERTING) {
+                return;
+            }
+
+            Component component = GridOfLabels.this.findComponentAt(e.getPoint());
+            if (!(component instanceof CellLabel)) {
+                return;
+            }
+            refreshCells();
+            final int fy = ((CellLabel) component).y;
+            final int fx = ((CellLabel) component).x;
+
+            int[][] pattern = ((Construct) insertingSelectionComboBox.getSelectedItem()).getPattern();
+
+            for (int y = 0; y < pattern.length; y++) {
+                for (int x = 0; x < pattern[0].length; x++) {
+                    if (pattern[y][x] == 1) {
+                        cells.get(fy + y, fx + x).setBackground(Color.yellow);
+                    }
+                }
+            }
         }
 
     }
