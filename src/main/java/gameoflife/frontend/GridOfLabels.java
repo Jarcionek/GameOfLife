@@ -1,6 +1,5 @@
 package gameoflife.frontend;
 
-import gameoflife.Main;
 import gameoflife.backend.Cell;
 import gameoflife.backend.CellType;
 import gameoflife.backend.Construct;
@@ -20,6 +19,9 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+
+import static gameoflife.Constants.CELL_SIZE;
+import static gameoflife.Constants.HIGHLIGHTING_COLOR;
 
 public class GridOfLabels extends JPanel {
 
@@ -41,7 +43,7 @@ public class GridOfLabels extends JPanel {
         for (int y = 0; y < cells.height(); y++) {
             for (int x = 0; x < cells.width(); x++) {
                 CellLabel label = new CellLabel(y, x);
-                label.setPreferredSize(new Dimension(Main.CELL_SIZE, Main.CELL_SIZE));
+                label.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
                 label.setOpaque(true);
                 cells.set(y, x, label);
                 add(label);
@@ -161,7 +163,7 @@ public class GridOfLabels extends JPanel {
             for (int y = 0; y < pattern.length; y++) {
                 for (int x = 0; x < pattern[0].length; x++) {
                     if (pattern[y][x] == 1) {
-                        cells.get(cellLabel.y + y, cellLabel.x + x).setBackground(Color.yellow);
+                        cells.get(cellLabel.y + y, cellLabel.x + x).setBackground(HIGHLIGHTING_COLOR);
                     }
                 }
             }

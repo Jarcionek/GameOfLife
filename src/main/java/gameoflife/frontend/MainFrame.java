@@ -1,6 +1,5 @@
 package gameoflife.frontend;
 
-import gameoflife.Main;
 import gameoflife.backend.CellType;
 import gameoflife.backend.Construct;
 import gameoflife.backend.Game;
@@ -21,6 +20,10 @@ import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+
+import static gameoflife.Constants.BOARD_HEIGHT;
+import static gameoflife.Constants.BOARD_WIDTH;
+import static gameoflife.backend.Matrix.randomMatrix;
 
 public class MainFrame extends JFrame {
 
@@ -102,7 +105,7 @@ public class MainFrame extends JFrame {
                 autoPlaySwingWorker.cancel(true);
             }
             dispose();
-            SwingUtilities.invokeLater(() -> Main.main(null));
+            SwingUtilities.invokeLater(() -> new MainFrame(new Game(randomMatrix(BOARD_HEIGHT, BOARD_WIDTH))));
         });
         gameMenu.add(restartMenuItem);
         jMenuBar.add(gameMenu);
