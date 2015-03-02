@@ -34,9 +34,9 @@ public class GridOfLabels extends JPanel {
                 CellLabel label = new CellLabel(y, x);
                 label.setPreferredSize(new Dimension(Main.CELL_SIZE, Main.CELL_SIZE));
                 label.setOpaque(true);
-                setCellBorder(y, x);
                 cells.set(y, x, label);
                 add(label);
+                setCellBorder(y, x);
             }
         }
 
