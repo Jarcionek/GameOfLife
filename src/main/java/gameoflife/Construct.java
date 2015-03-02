@@ -50,7 +50,7 @@ public enum Construct {
 
     private final int[][] pattern;
 
-    Construct(String... rows) {
+    private Construct(String... rows) {
         pattern = new int[rows.length][rows[0].length()];
         int y = 0;
         for (String row : rows) {

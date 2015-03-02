@@ -11,6 +11,7 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
 public class GridOfLabels extends JPanel {
 
@@ -43,6 +44,7 @@ public class GridOfLabels extends JPanel {
         CellDrawingMouseAdapter cellDrawingMouseAdapter = new CellDrawingMouseAdapter();
         this.addMouseListener(cellDrawingMouseAdapter);
         this.addMouseMotionListener(cellDrawingMouseAdapter);
+        this.addMouseWheelListener(cellDrawingMouseAdapter);
     }
 
     public void refreshCells() {
@@ -85,6 +87,21 @@ public class GridOfLabels extends JPanel {
 
     private class CellDrawingMouseAdapter extends MouseAdapter {
 
+        private final ConstructPatternOrientation cpo = new ConstructPatternOrientation();
+
+        private int orientation = 0;
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            orientation += e.getWheelRotation();
+            orientation %= 8;
+            refreshCells();
+            Component component = GridOfLabels.this.findComponentAt(e.getPoint());
+            if (drawingEnabled && component instanceof CellLabel) {
+                highlight((CellLabel) component);
+            }
+        }
+
         @Override
         public void mousePressed(MouseEvent e) {
             mousePressedOrDragged(e.getPoint());
@@ -117,6 +134,8 @@ public class GridOfLabels extends JPanel {
             int[][] pattern = ((Construct) insertingSelectionComboBox.getSelectedItem()).getPattern();
             CellType cellType = (CellType) drawingSelectionComboBox.getSelectedItem();
 
+            pattern = cpo.inOrientation(orientation, pattern);
+
             for (int y = 0; y < pattern.length; y++) {
                 for (int x = 0; x < pattern[0].length; x++) {
                     if (pattern[y][x] == 1) {
@@ -128,6 +147,8 @@ public class GridOfLabels extends JPanel {
 
         private void highlight(CellLabel cellLabel) {
             int[][] pattern = ((Construct) insertingSelectionComboBox.getSelectedItem()).getPattern();
+
+            pattern = cpo.inOrientation(orientation, pattern);
 
             for (int y = 0; y < pattern.length; y++) {
                 for (int x = 0; x < pattern[0].length; x++) {
