@@ -1,6 +1,5 @@
 package gameoflife;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -10,7 +9,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -26,9 +24,7 @@ public class MainFrame extends JFrame {
     private SwingWorker<Object, Object> autoPlaySwingWorker;
 
     private final GridOfLabels cells;
-    private final JRadioButton insertingRadioButton = new JRadioButton("insert:");
     private final JComboBox<Construct> insertingSelectionComboBox = new JComboBox<>(Construct.values());
-    private final JRadioButton drawingRadioButton = new JRadioButton("draw:");
     private final JComboBox<CellType> drawingSelectionComboBox = new JComboBox<>(CellType.values());
     private final JLabel generationCountLabel = new PlainFontLabel("0");
     private final JButton nextButton = new JButton("next");
@@ -55,22 +51,15 @@ public class MainFrame extends JFrame {
     }
 
     private void customizeComponentsAndAddListeners() {
-        insertingRadioButton.addActionListener(click -> cells.setMouseListenerMode(MouseListenerMode.INSERTING));
-        drawingRadioButton.addActionListener(click -> cells.setMouseListenerMode(MouseListenerMode.DRAWING));
-
-        ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(insertingRadioButton);
-        buttonGroup.add(drawingRadioButton);
-
         autoPlayCheckBox.setFont(PlainFontLabel.DEFAULT_FONT);
         autoPlayCheckBox.addActionListener(click -> {
             if (autoPlayCheckBox.isSelected()) {
                 nextButton.setEnabled(false);
-                cells.setMouseListenerMode(MouseListenerMode.DISABLED);
-                buttonGroup.clearSelection();
+                cells.setDrawingEnabled(false);
                 autoPlaySwingWorker = new AutoPlaySwingWorker();
                 autoPlaySwingWorker.execute();
             } else {
+                cells.setDrawingEnabled(true);
                 autoPlaySwingWorker.cancel(false);
                 nextButton.setEnabled(true);
             }
@@ -84,9 +73,7 @@ public class MainFrame extends JFrame {
 
     private void createLayout() {
         JPanel buttonsPanel = new JPanel();
-        buttonsPanel.add(insertingRadioButton);
         buttonsPanel.add(insertingSelectionComboBox);
-        buttonsPanel.add(drawingRadioButton);
         buttonsPanel.add(drawingSelectionComboBox);
         buttonsPanel.add(generationCountLabel);
         buttonsPanel.add(nextButton);

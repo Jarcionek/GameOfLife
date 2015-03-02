@@ -2,6 +2,9 @@ package gameoflife;
 
 public enum Construct {
 
+    CELL(
+            "1"
+    ),
     BLOCK(
             "11",
             "11"

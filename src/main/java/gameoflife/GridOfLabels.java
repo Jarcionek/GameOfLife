@@ -20,7 +20,7 @@ public class GridOfLabels extends JPanel {
     private final JComboBox<Construct> insertingSelectionComboBox;
     private final JComboBox<CellType> drawingSelectionComboBox;
 
-    private MouseListenerMode mouseListenerMode = MouseListenerMode.DISABLED;
+    private boolean drawingEnabled = true;
 
     public GridOfLabels(Matrix matrix, JComboBox<Construct> insertingSelectionComboBox, JComboBox<CellType> drawingSelectionComboBox) {
         super(new GridLayout(matrix.height(), matrix.width()));
@@ -43,10 +43,6 @@ public class GridOfLabels extends JPanel {
         CellDrawingMouseAdapter cellDrawingMouseAdapter = new CellDrawingMouseAdapter();
         this.addMouseListener(cellDrawingMouseAdapter);
         this.addMouseMotionListener(cellDrawingMouseAdapter);
-
-        ConstructInsertingMouseAdapter constructInsertingMouseAdapter = new ConstructInsertingMouseAdapter();
-        this.addMouseListener(constructInsertingMouseAdapter);
-        this.addMouseMotionListener(constructInsertingMouseAdapter);
     }
 
     public void refreshCells() {
@@ -56,10 +52,6 @@ public class GridOfLabels extends JPanel {
             }
         }
         this.repaint();
-    }
-
-    public void setMouseListenerMode(MouseListenerMode mouseListenerMode) {
-        this.mouseListenerMode = mouseListenerMode;
     }
 
     private void setCellBorder(int y, int x) {
@@ -73,6 +65,10 @@ public class GridOfLabels extends JPanel {
         } else {
             cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, color));
         }
+    }
+
+    public void setDrawingEnabled(boolean drawingEnabled) {
+        this.drawingEnabled = drawingEnabled;
     }
 
     private class CellLabel extends JLabel {
@@ -91,78 +87,52 @@ public class GridOfLabels extends JPanel {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            paintCell(e.getPoint());
+            mousePressedOrDragged(e.getPoint());
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            paintCell(e.getPoint());
+            mousePressedOrDragged(e.getPoint());
         }
 
-        private void paintCell(Point point) {
-            if (mouseListenerMode != MouseListenerMode.DRAWING) {
-                return;
-            }
-
+        private void mousePressedOrDragged(Point point) {
             Component component = GridOfLabels.this.findComponentAt(point);
-            if (component instanceof CellLabel) {
-                CellLabel cellLabel = (CellLabel) component;
-                matrix.set(new Cell(cellLabel.y, cellLabel.x, (CellType) drawingSelectionComboBox.getSelectedItem()));
+            if (drawingEnabled && component instanceof CellLabel) {
+                insertObject((CellLabel) component);
                 refreshCells();
+                highlight((CellLabel) component);
             }
         }
-
-    }
-
-    private class ConstructInsertingMouseAdapter extends MouseAdapter {
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            if (mouseListenerMode != MouseListenerMode.INSERTING) {
-                return;
-            }
-
+        public void mouseMoved(MouseEvent e) {
             Component component = GridOfLabels.this.findComponentAt(e.getPoint());
-            if (!(component instanceof CellLabel)) {
-                return;
+            if (drawingEnabled && component instanceof CellLabel) {
+                refreshCells();
+                highlight((CellLabel) component);
             }
-            final int fy = ((CellLabel) component).y;
-            final int fx = ((CellLabel) component).x;
+        }
 
+        private void insertObject(CellLabel cellLabel) {
             int[][] pattern = ((Construct) insertingSelectionComboBox.getSelectedItem()).getPattern();
             CellType cellType = (CellType) drawingSelectionComboBox.getSelectedItem();
 
             for (int y = 0; y < pattern.length; y++) {
                 for (int x = 0; x < pattern[0].length; x++) {
                     if (pattern[y][x] == 1) {
-                        matrix.set(new Cell(fy + y, fx + x, cellType));
+                        matrix.set(new Cell(cellLabel.y + y, cellLabel.x + x, cellType));
                     }
                 }
             }
-
-            refreshCells();
         }
 
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            if (mouseListenerMode != MouseListenerMode.INSERTING) {
-                return;
-            }
-
-            Component component = GridOfLabels.this.findComponentAt(e.getPoint());
-            if (!(component instanceof CellLabel)) {
-                return;
-            }
-            refreshCells();
-            final int fy = ((CellLabel) component).y;
-            final int fx = ((CellLabel) component).x;
-
+        private void highlight(CellLabel cellLabel) {
             int[][] pattern = ((Construct) insertingSelectionComboBox.getSelectedItem()).getPattern();
 
             for (int y = 0; y < pattern.length; y++) {
                 for (int x = 0; x < pattern[0].length; x++) {
                     if (pattern[y][x] == 1) {
-                        cells.get(fy + y, fx + x).setBackground(Color.yellow);
+                        cells.get(cellLabel.y + y, cellLabel.x + x).setBackground(Color.yellow);
                     }
                 }
             }
