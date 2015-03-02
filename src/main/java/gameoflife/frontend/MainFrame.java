@@ -1,4 +1,9 @@
-package gameoflife;
+package gameoflife.frontend;
+
+import gameoflife.Main;
+import gameoflife.backend.CellType;
+import gameoflife.backend.Construct;
+import gameoflife.backend.Game;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;

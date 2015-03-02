@@ -1,4 +1,12 @@
-package gameoflife;
+package gameoflife.frontend;
+
+import gameoflife.Main;
+import gameoflife.backend.Cell;
+import gameoflife.backend.CellType;
+import gameoflife.backend.Construct;
+import gameoflife.backend.ConstructPatternOrientation;
+import gameoflife.backend.Matrix;
+import gameoflife.backend.TwoDimensionalArray;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;

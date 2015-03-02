@@ -1,4 +1,4 @@
-package gameoflife;
+package gameoflife.frontend;
 
 import javax.swing.JLabel;
 import java.awt.Font;

@@ -1,4 +1,6 @@
-package gameoflife;
+package gameoflife.frontend;
+
+import gameoflife.backend.CellType;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;

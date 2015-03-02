@@ -1,4 +1,4 @@
-package gameoflife;
+package gameoflife.backend;
 
 import java.lang.reflect.Array;
 

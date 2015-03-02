@@ -1,5 +1,10 @@
 package gameoflife;
 
+import gameoflife.backend.CellType;
+import gameoflife.backend.Game;
+import gameoflife.backend.Matrix;
+import gameoflife.frontend.MainFrame;
+
 import java.util.Random;
 
 public class Main {

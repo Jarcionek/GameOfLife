@@ -1,4 +1,4 @@
-package gameoflife;
+package gameoflife.backend;
 
 public class ConstructPatternOrientation {
 
