@@ -95,9 +95,9 @@ public class GridOfLabels extends JPanel {
 
     }
 
-    private class CellDrawingMouseAdapter extends MouseAdapter {
+    private class CellDrawingMouseAdapter extends MouseAdapter { //TODO Jarek: extract to its own class
 
-        private final ConstructPatternOrientation cpo = new ConstructPatternOrientation();
+        private final ConstructPatternOrientation cpo = new ConstructPatternOrientation(); //TODO Jarek: do dependency injection
 
         private int orientation = 0;
 

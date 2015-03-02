@@ -1,6 +1,6 @@
 package gameoflife.backend;
 
-public class ConstructPatternOrientation {
+public class ConstructPatternOrientation { //TODO Jarek: find better names
 
     public int[][] inOrientation(int orientation, int[][] pattern) {
         switch (orientation) {

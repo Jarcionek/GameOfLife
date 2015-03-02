@@ -115,7 +115,7 @@ public class MainFrame extends JFrame {
                 autoPlaySwingWorker.cancel(true);
             }
             dispose();
-            SwingUtilities.invokeLater(() -> new MainFrame(new Game(randomMatrix(BOARD_HEIGHT, BOARD_WIDTH))));
+            SwingUtilities.invokeLater(() -> new MainFrame(new Game(randomMatrix(BOARD_HEIGHT, BOARD_WIDTH)))); //TODO Jarek: add Config class to contain all the wiring
         });
         newGameMenu.add(randomGridMenuItem);
         jMenuBar.add(newGameMenu);
@@ -128,7 +128,7 @@ public class MainFrame extends JFrame {
         cells.refreshCells();
     }
 
-    private class AutoPlaySwingWorker extends SwingWorker<Object, Object> {
+    private class AutoPlaySwingWorker extends SwingWorker<Object, Object> { //TODO Jarek: extract to its own class, make refresh gui a runnable and pass as a function
 
         @Override
         protected Object doInBackground() throws Exception {
