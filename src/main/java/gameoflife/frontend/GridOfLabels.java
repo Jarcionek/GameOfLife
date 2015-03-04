@@ -1,6 +1,5 @@
 package gameoflife.frontend;
 
-import gameoflife.backend.Cell;
 import gameoflife.backend.CellType;
 import gameoflife.backend.Construct;
 import gameoflife.backend.ConstructPatternOrientation;
@@ -103,8 +102,7 @@ public class GridOfLabels extends JPanel {
 
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
-            orientation += e.getWheelRotation();
-            orientation %= 8;
+            orientation = (orientation + e.getWheelRotation() + 8) % 8;
             refreshCells();
             Component component = GridOfLabels.this.findComponentAt(e.getPoint());
             if (drawingEnabled && component instanceof CellLabel) {
@@ -149,7 +147,7 @@ public class GridOfLabels extends JPanel {
             for (int y = 0; y < pattern.length; y++) {
                 for (int x = 0; x < pattern[0].length; x++) {
                     if (pattern[y][x] == 1) {
-                        matrix.set(new Cell(cellLabel.y + y, cellLabel.x + x, cellType));
+                        matrix.set(cellLabel.y + y, cellLabel.x + x, cellType);
                     }
                 }
             }
