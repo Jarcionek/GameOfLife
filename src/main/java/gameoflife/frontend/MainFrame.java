@@ -7,7 +7,6 @@ import gameoflife.backend.Game;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -27,8 +26,8 @@ public class MainFrame extends JFrame {
     private SwingWorker<Object, Object> autoPlaySwingWorker;
 
     private final GridOfLabels cells;
-    private final JComboBox<Construct> insertingSelectionComboBox = new JComboBox<>(Construct.values());
-    private final JComboBox<CellType> drawingSelectionComboBox = new JComboBox<>(CellType.values());
+    private final TypeSafeJComboBox<Construct> insertingSelectionComboBox = new TypeSafeJComboBox<>(Construct.values());
+    private final TypeSafeJComboBox<CellType> drawingSelectionComboBox = new TypeSafeJComboBox<>(CellType.values());
     private final JLabel generationCountLabel = new PlainFontLabel("0");
     private final JButton nextButton = new JButton("next");
     private final JCheckBox autoPlayCheckBox = new JCheckBox("autoplay");
@@ -39,7 +38,11 @@ public class MainFrame extends JFrame {
         super("Conway's Game of Life");
 
         this.game = game;
-        this.cells = new GridOfLabels(game.getMatrix(), insertingSelectionComboBox, drawingSelectionComboBox); //TODO Jarek: do dependency injection
+        this.cells = new GridOfLabels(
+                game.getMatrix(),
+                insertingSelectionComboBox::getSelectedItem,
+                drawingSelectionComboBox::getSelectedItem
+        );
 
         customizeComponentsAndAddListeners();
         createLayout();

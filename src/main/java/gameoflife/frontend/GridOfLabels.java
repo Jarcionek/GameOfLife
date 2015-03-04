@@ -8,7 +8,6 @@ import gameoflife.backend.Matrix;
 import gameoflife.backend.TwoDimensionalArray;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.Color;
@@ -19,6 +18,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.function.Supplier;
 
 import static gameoflife.Constants.CELL_SIZE;
 import static gameoflife.Constants.HIGHLIGHTING_COLOR;
@@ -28,15 +28,15 @@ public class GridOfLabels extends JPanel {
     private final TwoDimensionalArray<CellLabel> cells;
     private final Matrix matrix;
 
-    private final JComboBox<Construct> insertingSelectionComboBox;
-    private final JComboBox<CellType> drawingSelectionComboBox;
+    private final Supplier<Construct> constructSupplier;
+    private final Supplier<CellType> cellTypeSupplier;
 
     private boolean drawingEnabled = true;
 
-    public GridOfLabels(Matrix matrix, JComboBox<Construct> insertingSelectionComboBox, JComboBox<CellType> drawingSelectionComboBox) {
+    public GridOfLabels(Matrix matrix, Supplier<Construct> constructSupplier, Supplier<CellType> cellTypeSupplier) {
         super(new GridLayout(matrix.height(), matrix.width()));
-        this.insertingSelectionComboBox = insertingSelectionComboBox;
-        this.drawingSelectionComboBox = drawingSelectionComboBox;
+        this.constructSupplier = constructSupplier;
+        this.cellTypeSupplier = cellTypeSupplier;
         this.cells = new TwoDimensionalArray<>(matrix.height(), matrix.width(), new CellLabel(-1, -1));
         this.matrix = matrix;
 
@@ -141,8 +141,8 @@ public class GridOfLabels extends JPanel {
         }
 
         private void insertObject(CellLabel cellLabel) {
-            int[][] pattern = ((Construct) insertingSelectionComboBox.getSelectedItem()).getPattern();
-            CellType cellType = (CellType) drawingSelectionComboBox.getSelectedItem();
+            int[][] pattern = constructSupplier.get().getPattern();
+            CellType cellType = cellTypeSupplier.get();
 
             pattern = cpo.inOrientation(orientation, pattern);
 
@@ -156,7 +156,7 @@ public class GridOfLabels extends JPanel {
         }
 
         private void highlight(CellLabel cellLabel) {
-            int[][] pattern = ((Construct) insertingSelectionComboBox.getSelectedItem()).getPattern();
+            int[][] pattern = constructSupplier.get().getPattern();
 
             pattern = cpo.inOrientation(orientation, pattern);
 
