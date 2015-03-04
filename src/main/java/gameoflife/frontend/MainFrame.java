@@ -26,8 +26,8 @@ public class MainFrame extends JFrame {
     private SwingWorker<Object, Object> autoPlaySwingWorker;
 
     private final GridOfLabels cells;
-    private final TypeSafeJComboBox<Construct> insertingSelectionComboBox = new TypeSafeJComboBox<>(Construct.values());
-    private final TypeSafeJComboBox<CellType> drawingSelectionComboBox = new TypeSafeJComboBox<>(CellType.values());
+    private final TypeSafeJComboBox<Construct> constructSelectionComboBox = new TypeSafeJComboBox<>(Construct.values());
+    private final TypeSafeJComboBox<CellType> cellTypeSelectionComboBox = new TypeSafeJComboBox<>(CellType.values());
     private final JLabel generationCountLabel = new PlainFontLabel("0");
     private final JButton nextButton = new JButton("next");
     private final JCheckBox autoPlayCheckBox = new JCheckBox("autoplay");
@@ -40,8 +40,8 @@ public class MainFrame extends JFrame {
         this.game = game;
         this.cells = new GridOfLabels(
                 game.getMatrix(),
-                insertingSelectionComboBox::getSelectedItem,
-                drawingSelectionComboBox::getSelectedItem
+                constructSelectionComboBox::getSelectedItem,
+                cellTypeSelectionComboBox::getSelectedItem
         );
 
         customizeComponentsAndAddListeners();
@@ -60,7 +60,7 @@ public class MainFrame extends JFrame {
         autoPlayCheckBox.setFont(PlainFontLabel.DEFAULT_FONT);
         autoPlayCheckBox.addActionListener(click -> {
             if (autoPlayCheckBox.isSelected()) {
-                nextButton.setEnabled(false);
+                setButtonsEnabled(false);
                 cells.setDrawingEnabled(false);
                 autoPlaySwingWorker = new AutoPlaySwingWorker(
                         game::nextGeneration,
@@ -71,7 +71,7 @@ public class MainFrame extends JFrame {
             } else {
                 autoPlaySwingWorker.cancel(false);
                 cells.setDrawingEnabled(true);
-                nextButton.setEnabled(true);
+                setButtonsEnabled(true);
             }
         });
 
@@ -83,8 +83,8 @@ public class MainFrame extends JFrame {
 
     private void createLayout() {
         JPanel buttonsPanel = new JPanel();
-        buttonsPanel.add(insertingSelectionComboBox);
-        buttonsPanel.add(drawingSelectionComboBox);
+        buttonsPanel.add(constructSelectionComboBox);
+        buttonsPanel.add(cellTypeSelectionComboBox);
         buttonsPanel.add(generationCountLabel);
         buttonsPanel.add(nextButton);
         buttonsPanel.add(autoPlayCheckBox);
@@ -121,6 +121,12 @@ public class MainFrame extends JFrame {
         newGameMenu.add(randomGridMenuItem);
         jMenuBar.add(newGameMenu);
         setJMenuBar(jMenuBar);
+    }
+
+    private void setButtonsEnabled(boolean enabled) {
+        nextButton.setEnabled(enabled);
+        cellTypeSelectionComboBox.setEnabled(enabled);
+        constructSelectionComboBox.setEnabled(enabled);
     }
 
     private void refreshGui() {
