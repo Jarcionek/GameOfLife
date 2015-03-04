@@ -1,5 +1,6 @@
 package gameoflife.frontend;
 
+import gameoflife.Config;
 import gameoflife.backend.CellType;
 import gameoflife.backend.Construct;
 import gameoflife.backend.Game;
@@ -20,11 +21,6 @@ import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-
-import static gameoflife.Constants.BOARD_HEIGHT;
-import static gameoflife.Constants.BOARD_WIDTH;
-import static gameoflife.backend.Matrix.emptyMatrix;
-import static gameoflife.backend.Matrix.randomMatrix;
 
 public class MainFrame extends JFrame {
 
@@ -106,7 +102,7 @@ public class MainFrame extends JFrame {
                 autoPlaySwingWorker.cancel(true);
             }
             dispose();
-            SwingUtilities.invokeLater(() -> new MainFrame(new Game(emptyMatrix(BOARD_HEIGHT, BOARD_WIDTH))));
+            SwingUtilities.invokeLater(Config::createNewFrameWithEmptyMatrix);
         });
         newGameMenu.add(blankGridMenuItem);
         JMenuItem randomGridMenuItem = new JMenuItem("Random Grid");
@@ -115,7 +111,7 @@ public class MainFrame extends JFrame {
                 autoPlaySwingWorker.cancel(true);
             }
             dispose();
-            SwingUtilities.invokeLater(() -> new MainFrame(new Game(randomMatrix(BOARD_HEIGHT, BOARD_WIDTH)))); //TODO Jarek: add Config class to contain all the wiring
+            SwingUtilities.invokeLater(Config::createNewFrame);
         });
         newGameMenu.add(randomGridMenuItem);
         jMenuBar.add(newGameMenu);

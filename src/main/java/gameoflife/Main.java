@@ -1,18 +1,13 @@
 package gameoflife;
 
-import gameoflife.backend.Game;
-import gameoflife.frontend.MainFrame;
-
-import static gameoflife.Constants.BOARD_HEIGHT;
-import static gameoflife.Constants.BOARD_WIDTH;
-import static gameoflife.backend.Matrix.randomMatrix;
+import static gameoflife.Config.createNewFrame;
 
 public class Main {
 
     public static void main(String[] args) {
         enableWorkAroundSwingBugs();
 
-        new MainFrame(new Game(randomMatrix(BOARD_HEIGHT, BOARD_WIDTH)));
+        createNewFrame();
     }
 
     private static void enableWorkAroundSwingBugs() {
