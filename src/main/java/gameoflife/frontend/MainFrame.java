@@ -1,6 +1,5 @@
 package gameoflife.frontend;
 
-import gameoflife.Config;
 import gameoflife.backend.CellType;
 import gameoflife.backend.Construct;
 import gameoflife.backend.Game;
@@ -19,6 +18,11 @@ import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 
+import static gameoflife.Constants.BOARD_HEIGHT;
+import static gameoflife.Constants.BOARD_WIDTH;
+import static gameoflife.backend.Matrix.emptyMatrix;
+import static gameoflife.backend.Matrix.randomMatrix;
+
 public class MainFrame extends JFrame {
 
     private final Game game;
@@ -34,7 +38,15 @@ public class MainFrame extends JFrame {
     private final JSlider autoPlaySlider = new AutoPlaySlider();
     private final StatisticsPanel statisticsPanel = new StatisticsPanel();
 
-    public MainFrame(Game game) {
+    public static MainFrame newFrameWithRandomMatrix() {
+        return new MainFrame(new Game(randomMatrix(BOARD_HEIGHT, BOARD_WIDTH)));
+    }
+
+    public static MainFrame newFrameWithEmptyMatrix() {
+        return new MainFrame(new Game(emptyMatrix(BOARD_HEIGHT, BOARD_WIDTH)));
+    }
+
+    private MainFrame(Game game) {
         super("Conway's Game of Life");
 
         this.game = game;
@@ -107,7 +119,7 @@ public class MainFrame extends JFrame {
                 autoPlaySwingWorker.cancel(true);
             }
             dispose();
-            SwingUtilities.invokeLater(Config::createNewFrameWithEmptyMatrix);
+            SwingUtilities.invokeLater(MainFrame::newFrameWithEmptyMatrix);
         });
         newGameMenu.add(blankGridMenuItem);
         JMenuItem randomGridMenuItem = new JMenuItem("Random Grid");
@@ -116,7 +128,7 @@ public class MainFrame extends JFrame {
                 autoPlaySwingWorker.cancel(true);
             }
             dispose();
-            SwingUtilities.invokeLater(Config::createNewFrame);
+            SwingUtilities.invokeLater(MainFrame::newFrameWithRandomMatrix);
         });
         newGameMenu.add(randomGridMenuItem);
         jMenuBar.add(newGameMenu);
