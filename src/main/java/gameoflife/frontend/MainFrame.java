@@ -19,8 +19,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
-import java.util.List;
-import java.util.concurrent.CancellationException;
 
 public class MainFrame extends JFrame {
 
@@ -61,11 +59,15 @@ public class MainFrame extends JFrame {
             if (autoPlayCheckBox.isSelected()) {
                 nextButton.setEnabled(false);
                 cells.setDrawingEnabled(false);
-                autoPlaySwingWorker = new AutoPlaySwingWorker();
+                autoPlaySwingWorker = new AutoPlaySwingWorker(
+                        game::nextGeneration,
+                        autoPlaySlider::getValue,
+                        this::refreshGui
+                );
                 autoPlaySwingWorker.execute();
             } else {
-                cells.setDrawingEnabled(true);
                 autoPlaySwingWorker.cancel(false);
+                cells.setDrawingEnabled(true);
                 nextButton.setEnabled(true);
             }
         });
@@ -122,36 +124,6 @@ public class MainFrame extends JFrame {
         generationCountLabel.setText("generation " + game.getGenerationCount());
         statisticsPanel.update(game.getStatistics());
         cells.refreshCells();
-    }
-
-    private class AutoPlaySwingWorker extends SwingWorker<Object, Object> { //TODO Jarek: extract to its own class, make refresh gui a runnable and pass as a function
-
-        @Override
-        protected Object doInBackground() throws Exception {
-            while (!isCancelled()) {
-                game.nextGeneration();
-                publish(new Object());
-                Thread.sleep(autoPlaySlider.getValue());
-            }
-            return null;
-        }
-
-        @Override
-        protected void process(List<Object> chunks) {
-            refreshGui();
-        }
-
-        @Override
-        protected void done() {
-            try {
-                get();
-            } catch (CancellationException e) {
-                // cancelled by unchecking the box
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
     }
 
 }
