@@ -48,10 +48,10 @@ public enum Construct {
     )
     ;
 
-    private final int[][] pattern;
+    private final ConstructPattern pattern;
 
     private Construct(String... rows) {
-        pattern = new int[rows.length][rows[0].length()];
+        int[][] pattern = new int[rows.length][rows[0].length()];
         int y = 0;
         for (String row : rows) {
             int x = 0;
@@ -67,9 +67,10 @@ public enum Construct {
             }
             y++;
         }
+        this.pattern = new ConstructPattern(pattern);
     }
 
-    public int[][] getPattern() {
+    public ConstructPattern getPattern() {
         return pattern;
     }
 

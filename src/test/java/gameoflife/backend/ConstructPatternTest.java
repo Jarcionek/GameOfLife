@@ -6,19 +6,19 @@ import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.CoreMatchers.is;
 
-public class ConstructPatternOrientationTest {
+public class ConstructPatternTest {
 
-    private final ConstructPatternOrientation cpo = new ConstructPatternOrientation();
-
-    private final int[][] defaultPattern = new int[][] {
+    private final int[][] PATTERN = new int[][] {
             {0, 0},
             {0, 1},
             {0, 1},
     };
 
+    private final ConstructPattern constructPattern = new ConstructPattern(PATTERN);
+
     @Test
     public void orientation_0_IsDefault() {
-        assertThat(cpo.inOrientation(0, defaultPattern), is(sameBeanAs(new int[][] {
+        assertThat(constructPattern.inOrientation(0), is(sameBeanAs(new int[][] {
                 {0, 0},
                 {0, 1},
                 {0, 1},
@@ -27,7 +27,7 @@ public class ConstructPatternOrientationTest {
 
     @Test
     public void orientation_1_IsFlippedVertically() {
-        assertThat(cpo.inOrientation(1, defaultPattern), is(sameBeanAs(new int[][] {
+        assertThat(constructPattern.inOrientation(1), is(sameBeanAs(new int[][] {
                 {0, 0},
                 {1, 0},
                 {1, 0},
@@ -36,7 +36,7 @@ public class ConstructPatternOrientationTest {
     
     @Test
     public void orientation_2_IsRotatedClockwise() {
-        assertThat(cpo.inOrientation(2, defaultPattern), is(sameBeanAs(new int[][] {
+        assertThat(constructPattern.inOrientation(2), is(sameBeanAs(new int[][] {
                 {0, 0, 0},
                 {1, 1, 0},
         })));
@@ -44,7 +44,7 @@ public class ConstructPatternOrientationTest {
 
     @Test
     public void orientation_3_IsRotatedClockwiseAndFlippedHorizontally() {
-        assertThat(cpo.inOrientation(3, defaultPattern), is(sameBeanAs(new int[][] {
+        assertThat(constructPattern.inOrientation(3), is(sameBeanAs(new int[][] {
                 {1, 1, 0},
                 {0, 0, 0},
         })));
@@ -52,7 +52,7 @@ public class ConstructPatternOrientationTest {
 
     @Test
     public void orientation_4_IsRotatedAround() {
-        assertThat(cpo.inOrientation(4, defaultPattern), is(sameBeanAs(new int[][] {
+        assertThat(constructPattern.inOrientation(4), is(sameBeanAs(new int[][] {
                 {1, 0},
                 {1, 0},
                 {0, 0},
@@ -61,7 +61,7 @@ public class ConstructPatternOrientationTest {
 
     @Test
     public void orientation_5_IsRotatedAroundAndFlippedVertically() {
-        assertThat(cpo.inOrientation(5, defaultPattern), is(sameBeanAs(new int[][] {
+        assertThat(constructPattern.inOrientation(5), is(sameBeanAs(new int[][] {
                 {0, 1},
                 {0, 1},
                 {0, 0},
@@ -70,7 +70,7 @@ public class ConstructPatternOrientationTest {
 
     @Test
     public void orientation_6_IsRotatedAntiClockwise() {
-        assertThat(cpo.inOrientation(6, defaultPattern), is(sameBeanAs(new int[][] {
+        assertThat(constructPattern.inOrientation(6), is(sameBeanAs(new int[][] {
                 {0, 1, 1},
                 {0, 0, 0},
         })));
@@ -78,7 +78,7 @@ public class ConstructPatternOrientationTest {
 
     @Test
     public void orientation_7_IsRotatedAntiClockwiseAndFlippedHorizontally() {
-        assertThat(cpo.inOrientation(7, defaultPattern), is(sameBeanAs(new int[][] {
+        assertThat(constructPattern.inOrientation(7), is(sameBeanAs(new int[][] {
                 {0, 0, 0},
                 {0, 1, 1},
         })));

@@ -8,5 +8,6 @@ public class Constants {
     public static final int BOARD_WIDTH = 160; // in number of cells
     public static final int CELL_SIZE = 10; // in pixels
     public static final Color HIGHLIGHTING_COLOR = Color.yellow;
+    public static final Color CELL_BORDER_COLOR = Color.darkGray;
 
 }

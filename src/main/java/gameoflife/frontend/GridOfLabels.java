@@ -2,14 +2,12 @@ package gameoflife.frontend;
 
 import gameoflife.backend.CellType;
 import gameoflife.backend.Construct;
-import gameoflife.backend.ConstructPatternOrientation;
 import gameoflife.backend.Matrix;
 import gameoflife.backend.TwoDimensionalArray;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -19,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.function.Supplier;
 
+import static gameoflife.Constants.CELL_BORDER_COLOR;
 import static gameoflife.Constants.CELL_SIZE;
 import static gameoflife.Constants.HIGHLIGHTING_COLOR;
 
@@ -66,15 +65,14 @@ public class GridOfLabels extends JPanel {
     }
 
     private void setCellBorder(int y, int x) {
-        Color color = Color.darkGray;
         if (x == matrix.width() - 1 && y == matrix.height() - 1) {
-            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, color));
+            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, CELL_BORDER_COLOR));
         } else if (x == matrix.width() - 1) {
-            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, color));
+            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, CELL_BORDER_COLOR));
         } else if (y == matrix.height() - 1) {
-            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, color));
+            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, CELL_BORDER_COLOR));
         } else {
-            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, color));
+            cells.get(y, x).setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, CELL_BORDER_COLOR));
         }
     }
 
@@ -94,9 +92,7 @@ public class GridOfLabels extends JPanel {
 
     }
 
-    private class CellDrawingMouseAdapter extends MouseAdapter { //TODO Jarek: extract to its own class
-
-        private final ConstructPatternOrientation cpo = new ConstructPatternOrientation(); //TODO Jarek: do dependency injection
+    private class CellDrawingMouseAdapter extends MouseAdapter {
 
         private int orientation = 0;
 
@@ -139,10 +135,8 @@ public class GridOfLabels extends JPanel {
         }
 
         private void insertObject(CellLabel cellLabel) {
-            int[][] pattern = constructSupplier.get().getPattern();
+            int[][] pattern = pattern();
             CellType cellType = cellTypeSupplier.get();
-
-            pattern = cpo.inOrientation(orientation, pattern);
 
             for (int y = 0; y < pattern.length; y++) {
                 for (int x = 0; x < pattern[0].length; x++) {
@@ -154,9 +148,7 @@ public class GridOfLabels extends JPanel {
         }
 
         private void highlight(CellLabel cellLabel) {
-            int[][] pattern = constructSupplier.get().getPattern();
-
-            pattern = cpo.inOrientation(orientation, pattern);
+            int[][] pattern = pattern();
 
             for (int y = 0; y < pattern.length; y++) {
                 for (int x = 0; x < pattern[0].length; x++) {
@@ -165,6 +157,10 @@ public class GridOfLabels extends JPanel {
                     }
                 }
             }
+        }
+
+        private int[][] pattern() {
+            return constructSupplier.get().getPattern().inOrientation(orientation);
         }
 
     }

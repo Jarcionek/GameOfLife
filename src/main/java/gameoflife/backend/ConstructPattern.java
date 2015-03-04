@@ -1,8 +1,14 @@
 package gameoflife.backend;
 
-public class ConstructPatternOrientation { //TODO Jarek: find better names
+public class ConstructPattern {
 
-    public int[][] inOrientation(int orientation, int[][] pattern) {
+    private final int[][] pattern;
+
+    public ConstructPattern(int[][] pattern) {
+        this.pattern = pattern;
+    }
+
+    public int[][] inOrientation(int orientation) {
         switch (orientation) {
             case 0: return pattern;
             case 1: return flippedVertically(pattern);
